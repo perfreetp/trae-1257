@@ -7,7 +7,7 @@
 }
 
 .routeHeader {
-  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+  background: linear-gradient(135deg, $color-primary 0%, $color-gold 100%);
   padding: 40rpx $page-padding;
   color: $color-text-white;
 
@@ -126,6 +126,13 @@
     .stopInfo {
       font-size: $font-size-sm;
       color: $color-text-tertiary;
+      margin-bottom: 8rpx;
+    }
+
+    .stopDesc {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+      line-height: 1.5;
       margin-bottom: 12rpx;
     }
 

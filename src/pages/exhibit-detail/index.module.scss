@@ -396,3 +396,191 @@
     }
   }
 }
+
+.arOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: #000;
+
+  .arCamera {
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    .arBgImage {
+      width: 100%;
+      height: 100%;
+      opacity: 0.6;
+    }
+  }
+
+  .arScanFrame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    width: 500rpx;
+    height: 500rpx;
+
+    .arCorner {
+      position: absolute;
+      width: 48rpx;
+      height: 48rpx;
+      border-color: $color-gold;
+      border-style: solid;
+      border-width: 0;
+
+      &.arTopLeft { top: 0; left: 0; border-top-width: 4rpx; border-left-width: 4rpx; border-top-left-radius: $radius-md; }
+      &.arTopRight { top: 0; right: 0; border-top-width: 4rpx; border-right-width: 4rpx; border-top-right-radius: $radius-md; }
+      &.arBottomLeft { bottom: 0; left: 0; border-bottom-width: 4rpx; border-left-width: 4rpx; border-bottom-left-radius: $radius-md; }
+      &.arBottomRight { bottom: 0; right: 0; border-bottom-width: 4rpx; border-right-width: 4rpx; border-bottom-right-radius: $radius-md; }
+    }
+  }
+
+  .arInfoCard {
+    position: absolute;
+    bottom: 200rpx;
+    left: 32rpx;
+    right: 32rpx;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: $radius-lg;
+    padding: 28rpx;
+
+    .arInfoHeader {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12rpx;
+      .arDetectIcon { margin-right: 8rpx; font-size: $font-size-lg; }
+      .arDetectLabel { font-size: $font-size-sm; color: #1565C0; font-weight: $font-weight-semibold; }
+    }
+
+    .arExhibitName { font-size: $font-size-xl; font-weight: $font-weight-bold; color: $color-text-primary; margin-bottom: 8rpx; }
+    .arExhibitSubtitle { font-size: $font-size-md; color: $color-text-secondary; margin-bottom: 20rpx; }
+
+    .arInfoGrid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16rpx;
+
+      .arInfoItem {
+        width: calc(50% - 8rpx);
+        display: flex;
+        align-items: center;
+        background: $color-bg-secondary;
+        border-radius: $radius-sm;
+        padding: 12rpx;
+        .arInfoIcon { margin-right: 8rpx; font-size: $font-size-md; }
+        .arInfoLabel { font-size: $font-size-xs; color: $color-text-tertiary; margin-right: 8rpx; }
+        .arInfoValue { font-size: $font-size-sm; color: $color-text-primary; font-weight: $font-weight-medium; }
+      }
+    }
+  }
+
+  .arCloseBtn {
+    position: absolute;
+    top: 80rpx;
+    right: 32rpx;
+    width: 64rpx;
+    height: 64rpx;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: $radius-round;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-text-white;
+    font-size: $font-size-lg;
+  }
+}
+
+.noteOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .noteModal {
+    width: 600rpx;
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: 32rpx;
+
+    .noteModalTitle {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+      margin-bottom: 8rpx;
+    }
+
+    .noteExhibitName {
+      font-size: $font-size-sm;
+      color: $color-primary;
+      margin-bottom: 24rpx;
+    }
+
+    .noteTitleInput {
+      border: 2rpx solid $color-border;
+      border-radius: $radius-md;
+      padding: 16rpx 20rpx;
+      margin-bottom: 16rpx;
+      height: 72rpx;
+      font-size: $font-size-md;
+      color: $color-text-primary;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .noteContentInput {
+      border: 2rpx solid $color-border;
+      border-radius: $radius-md;
+      padding: 16rpx 20rpx;
+      margin-bottom: 24rpx;
+      min-height: 200rpx;
+      font-size: $font-size-md;
+      color: $color-text-primary;
+      line-height: 1.6;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .noteActions {
+      display: flex;
+      gap: 16rpx;
+
+      .noteCancelBtn {
+        flex: 1;
+        height: 80rpx;
+        background: $color-bg-secondary;
+        color: $color-text-secondary;
+        border-radius: $radius-button;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: $font-size-md;
+        font-weight: $font-weight-semibold;
+      }
+
+      .noteSaveBtn {
+        flex: 1;
+        height: 80rpx;
+        background: $color-primary;
+        color: $color-text-white;
+        border-radius: $radius-button;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: $font-size-md;
+        font-weight: $font-weight-semibold;
+      }
+    }
+  }
+}

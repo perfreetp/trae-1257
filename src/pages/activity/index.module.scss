@@ -44,7 +44,7 @@
 
   .categoryScroll {
     @include scroll-x-container;
-    margin: 0 -$page-padding;
+    margin: 0 (-$page-padding);
     padding: 0 $page-padding;
 
     .categoryItem {
@@ -329,6 +329,11 @@
       background: rgba(198, 40, 40, 0.1);
       color: $color-error;
     }
+
+    &.feedbacked {
+      background: rgba(46, 125, 50, 0.1);
+      color: #2E7D32;
+    }
   }
 
   .reservationInfo {
@@ -376,6 +381,12 @@
         background: $color-bg-secondary;
         color: $color-text-secondary;
       }
+
+      &.feedbackDone {
+        background: #E8F5E9;
+        color: #2E7D32;
+        font-weight: $font-weight-medium;
+      }
     }
   }
 }
@@ -410,6 +421,117 @@
 
     &:active {
       opacity: 0.9;
+    }
+  }
+}
+
+.feedbackModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .feedbackContent {
+    width: 620rpx;
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: 40rpx 32rpx;
+
+    .feedbackTitle {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+      text-align: center;
+      margin-bottom: 8rpx;
+    }
+
+    .feedbackActivity {
+      font-size: $font-size-sm;
+      color: $color-primary;
+      text-align: center;
+      margin-bottom: 32rpx;
+    }
+
+    .ratingSection {
+      margin-bottom: 28rpx;
+
+      .ratingLabel {
+        font-size: $font-size-md;
+        color: $color-text-secondary;
+        margin-bottom: 16rpx;
+      }
+
+      .ratingStars {
+        display: flex;
+        gap: 16rpx;
+
+        .starBtn {
+          transition: all $transition-base;
+
+          &:active {
+            transform: scale(0.9);
+          }
+        }
+      }
+    }
+
+    .commentSection {
+      margin-bottom: 28rpx;
+
+      .commentLabel {
+        font-size: $font-size-md;
+        color: $color-text-secondary;
+        margin-bottom: 16rpx;
+      }
+
+      .commentTextarea {
+        border: 2rpx solid $color-border;
+        border-radius: $radius-md;
+        padding: 16rpx 20rpx;
+        min-height: 200rpx;
+        font-size: $font-size-md;
+        color: $color-text-primary;
+        line-height: 1.6;
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
+    .feedbackActions {
+      display: flex;
+      gap: 16rpx;
+
+      .cancelFeedbackBtn {
+        flex: 1;
+        height: 80rpx;
+        background: $color-bg-secondary;
+        color: $color-text-secondary;
+        border-radius: $radius-button;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: $font-size-md;
+        font-weight: $font-weight-semibold;
+      }
+
+      .submitFeedbackBtn {
+        flex: 1;
+        height: 80rpx;
+        background: $color-primary;
+        color: $color-text-white;
+        border-radius: $radius-button;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: $font-size-md;
+        font-weight: $font-weight-semibold;
+      }
     }
   }
 }

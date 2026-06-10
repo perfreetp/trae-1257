@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView } from '@tarojs/components';
+import { View, Text, Image, ScrollView, Input, Textarea } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import styles from './index.module.scss';
 import { getExhibitById } from '@/data/exhibitions';
+import { useAppStore } from '@/store/appStore';
 import type { Exhibit } from '@/types/exhibition';
 
 const ExhibitDetailPage: React.FC = () => {
@@ -16,6 +17,12 @@ const ExhibitDetailPage: React.FC = () => {
   const [subtitleOn, setSubtitleOn] = useState(true);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showNoteInput, setShowNoteInput] = useState(false);
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
+  const [showArOverlay, setShowArOverlay] = useState(false);
+
+  const addNote = useAppStore(state => state.addNote);
 
   const modes = [
     { key: 'normal', icon: '🎧', label: '标准讲解' },
@@ -32,12 +39,10 @@ const ExhibitDetailPage: React.FC = () => {
   }, [exhibit]);
 
   const handleModeChange = (mode: string) => {
-    console.log('[ExhibitDetail] 切换讲解模式:', mode);
     setActiveMode(mode);
   };
 
   const handlePlayToggle = () => {
-    console.log('[ExhibitDetail] 播放/暂停');
     setIsPlaying(!isPlaying);
   };
 
@@ -46,11 +51,9 @@ const ExhibitDetailPage: React.FC = () => {
     const currentIndex = rates.indexOf(playbackRate);
     const nextIndex = (currentIndex + 1) % rates.length;
     setPlaybackRate(rates[nextIndex]);
-    console.log('[ExhibitDetail] 切换播放速度:', rates[nextIndex]);
   };
 
   const handleFavorite = () => {
-    console.log('[ExhibitDetail] 收藏/取消收藏');
     setIsFavorite(!isFavorite);
     Taro.showToast({
       title: isFavorite ? '已取消收藏' : '收藏成功',
@@ -59,27 +62,48 @@ const ExhibitDetailPage: React.FC = () => {
   };
 
   const handleShare = () => {
-    console.log('[ExhibitDetail] 分享');
     Taro.navigateTo({ url: '/pages/share-poster/index' });
   };
 
   const handleNote = () => {
-    console.log('[ExhibitDetail] 记笔记');
-    Taro.showToast({ title: '记笔记功能', icon: 'none' });
+    setNoteTitle('');
+    setNoteContent('');
+    setShowNoteInput(true);
+  };
+
+  const handleSaveNote = () => {
+    if (!noteTitle.trim() || !noteContent.trim()) {
+      Taro.showToast({ title: '请输入标题和内容', icon: 'none' });
+      return;
+    }
+    const now = new Date();
+    const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    addNote({
+      id: `n_${Date.now()}`,
+      title: noteTitle.trim(),
+      content: noteContent.trim(),
+      exhibitId: exhibit?.id,
+      exhibitName: exhibit?.name,
+      createTime: timeStr
+    });
+    setShowNoteInput(false);
+    Taro.showToast({ title: '笔记已保存', icon: 'success' });
   };
 
   const handleCheckin = () => {
-    console.log('[ExhibitDetail] 打卡');
     Taro.navigateTo({ url: '/pages/checkin/index' });
   };
 
   const handleArView = () => {
-    console.log('[ExhibitDetail] AR查看');
-    Taro.showToast({ title: 'AR功能即将上线', icon: 'none' });
+    setShowArOverlay(true);
   };
 
-  const handleImageChange = (e: any) => {
-    setCurrentImageIndex(e.detail.current);
+  const handleCloseAr = () => {
+    setShowArOverlay(false);
+  };
+
+  const handleGoToExhibitFromAr = () => {
+    setShowArOverlay(false);
   };
 
   if (!exhibit) {
@@ -92,6 +116,83 @@ const ExhibitDetailPage: React.FC = () => {
 
   return (
     <View className={styles.page}>
+      {showArOverlay && (
+        <View className={styles.arOverlay}>
+          <View className={styles.arCamera}>
+            <Image src={exhibit.image} mode="aspectFill" className={styles.arBgImage} />
+            <View className={styles.arScanFrame}>
+              <View className={`${styles.arCorner} ${styles.arTopLeft}`} />
+              <View className={`${styles.arCorner} ${styles.arTopRight}`} />
+              <View className={`${styles.arCorner} ${styles.arBottomLeft}`} />
+              <View className={`${styles.arCorner} ${styles.arBottomRight}`} />
+            </View>
+            <View className={styles.arInfoCard}>
+              <View className={styles.arInfoHeader}>
+                <Text className={styles.arDetectIcon}>✨</Text>
+                <Text className={styles.arDetectLabel}>AR 识别结果</Text>
+              </View>
+              <Text className={styles.arExhibitName}>{exhibit.name}</Text>
+              <Text className={styles.arExhibitSubtitle}>{exhibit.subtitle}</Text>
+              <View className={styles.arInfoGrid}>
+                <View className={styles.arInfoItem}>
+                  <Text className={styles.arInfoIcon}>⏰</Text>
+                  <Text className={styles.arInfoLabel}>年代</Text>
+                  <Text className={styles.arInfoValue}>{exhibit.era}</Text>
+                </View>
+                <View className={styles.arInfoItem}>
+                  <Text className={styles.arInfoIcon}>📋</Text>
+                  <Text className={styles.arInfoLabel}>类别</Text>
+                  <Text className={styles.arInfoValue}>{exhibit.category}</Text>
+                </View>
+                <View className={styles.arInfoItem}>
+                  <Text className={styles.arInfoIcon}>📍</Text>
+                  <Text className={styles.arInfoLabel}>位置</Text>
+                  <Text className={styles.arInfoValue}>{exhibit.location}</Text>
+                </View>
+                <View className={styles.arInfoItem}>
+                  <Text className={styles.arInfoIcon}>🎧</Text>
+                  <Text className={styles.arInfoLabel}>讲解</Text>
+                  <Text className={styles.arInfoValue}>{exhibit.audioDuration}</Text>
+                </View>
+              </View>
+            </View>
+            <View className={styles.arCloseBtn} onClick={handleCloseAr}>
+              <Text>✕</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {showNoteInput && (
+        <View className={styles.noteOverlay}>
+          <View className={styles.noteModal}>
+            <Text className={styles.noteModalTitle}>记笔记</Text>
+            <Text className={styles.noteExhibitName}>📍 {exhibit.name}</Text>
+            <Input
+              className={styles.noteTitleInput}
+              placeholder="输入笔记标题"
+              value={noteTitle}
+              onInput={(e) => setNoteTitle(e.detail.value)}
+            />
+            <Textarea
+              className={styles.noteContentInput}
+              placeholder="记录你对这件展品的感受和想法..."
+              value={noteContent}
+              onInput={(e) => setNoteContent(e.detail.value)}
+              maxlength={1000}
+            />
+            <View className={styles.noteActions}>
+              <View className={styles.noteCancelBtn} onClick={() => setShowNoteInput(false)}>
+                <Text>取消</Text>
+              </View>
+              <View className={styles.noteSaveBtn} onClick={handleSaveNote}>
+                <Text>保存笔记</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+
       <ScrollView scrollY>
         <View className={styles.imageGallery}>
           <View className={styles.mainImage}>

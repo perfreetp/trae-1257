@@ -1,3 +1,10 @@
+export interface ActivityGuest {
+  name: string;
+  title: string;
+  bio: string;
+  avatar: string;
+}
+
 export interface Activity {
   id: string;
   title: string;
@@ -6,6 +13,7 @@ export interface Activity {
   coverImage: string;
   date: string;
   time: string;
+  duration: string;
   location: string;
   capacity: number;
   signedUp: number;
@@ -13,6 +21,7 @@ export interface Activity {
   type: 'lecture' | 'workshop' | 'tour' | 'performance';
   status: 'upcoming' | 'ongoing' | 'ended';
   isReservation?: boolean;
+  guest?: ActivityGuest;
 }
 
 export interface Reservation {
@@ -24,4 +33,11 @@ export interface Reservation {
   status: 'reserved' | 'cancelled' | 'completed';
   ticketCount: number;
   reservationTime: string;
+  feedback?: ReservationFeedback;
+}
+
+export interface ReservationFeedback {
+  rating: number;
+  comment: string;
+  submitTime: string;
 }

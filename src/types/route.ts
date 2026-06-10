@@ -1,3 +1,12 @@
+export interface RouteStop {
+  id: string;
+  name: string;
+  exhibitId?: string;
+  location: string;
+  duration: string;
+  description: string;
+}
+
 export interface Route {
   id: string;
   name: string;
@@ -10,6 +19,7 @@ export interface Route {
   tags: string[];
   isWheelchairAccessible?: boolean;
   isRecommended?: boolean;
+  stops: RouteStop[];
 }
 
 export interface RoutePoint {

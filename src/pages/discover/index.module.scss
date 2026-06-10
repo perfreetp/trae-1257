@@ -157,7 +157,7 @@
 
 .cloudList {
   @include scroll-x-container;
-  margin: 0 -$page-padding;
+  margin: 0 (-$page-padding);
   padding: 0 $page-padding;
 
   .cloudCard {

@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, Button } from '@tarojs/components';
+import { View, Text, Image, ScrollView, Input, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { activities, reservations, getActivityTypeLabel, getActivityStatusLabel } from '@/data/activities';
+import { activities, getActivityTypeLabel, getActivityStatusLabel } from '@/data/activities';
+import { useAppStore } from '@/store/appStore';
 import type { Activity, Reservation } from '@/types/activity';
 
 const ActivityPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [feedbackId, setFeedbackId] = useState<string | null>(null);
+  const [feedbackRating, setFeedbackRating] = useState(5);
+  const [feedbackComment, setFeedbackComment] = useState('');
+
+  const reservations = useAppStore(state => state.reservations);
+  const addReservation = useAppStore(state => state.addReservation);
+  const cancelReservation = useAppStore(state => state.cancelReservation);
+  const rescheduleReservation = useAppStore(state => state.rescheduleReservation);
+  const submitFeedback = useAppStore(state => state.submitFeedback);
 
   const tabs = [
     { key: 'all', label: '全部活动' },
@@ -23,17 +33,14 @@ const ActivityPage: React.FC = () => {
   ];
 
   const handleTabChange = (key: string) => {
-    console.log('[Activity] 切换标签:', key);
     setActiveTab(key);
   };
 
   const handleCategoryChange = (key: string) => {
-    console.log('[Activity] 切换分类:', key);
     setActiveCategory(key);
   };
 
   const handleActivityClick = (activity: Activity) => {
-    console.log('[Activity] 点击活动:', activity.title);
     Taro.navigateTo({
       url: `/pages/activity-detail/index?id=${activity.id}`
     });
@@ -41,56 +48,93 @@ const ActivityPage: React.FC = () => {
 
   const handleSignUp = (e: React.MouseEvent, activity: Activity) => {
     e.stopPropagation();
-    console.log('[Activity] 报名活动:', activity.title);
+    const alreadyReserved = reservations.some(r => r.activityId === activity.id && r.status === 'reserved');
+    if (alreadyReserved) {
+      Taro.showToast({ title: '您已报名此活动', icon: 'none' });
+      return;
+    }
     Taro.showModal({
       title: '确认报名',
-      content: `确定报名参加「${activity.title}」吗？`,
+      content: `确定报名参加「${activity.title}」吗？${activity.price === 0 ? '本活动免费' : `费用：¥${activity.price}/人`}`,
       success: (res) => {
         if (res.confirm) {
+          const now = new Date();
+          const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          addReservation({
+            id: `r_${Date.now()}`,
+            activityId: activity.id,
+            activityTitle: activity.title,
+            date: activity.date,
+            time: activity.time,
+            status: 'reserved',
+            ticketCount: 1,
+            reservationTime: timeStr
+          });
           Taro.showToast({ title: '报名成功', icon: 'success' });
         }
       }
     });
   };
 
-  const handleReschedule = (reservation: Reservation) => {
-    console.log('[Activity] 预约改签:', reservation.activityTitle);
-    Taro.showToast({ title: '改签功能', icon: 'none' });
-  };
-
   const handleCancel = (reservation: Reservation) => {
-    console.log('[Activity] 取消预约:', reservation.activityTitle);
     Taro.showModal({
       title: '确认取消',
-      content: '确定要取消这个预约吗？',
+      content: `确定要取消「${reservation.activityTitle}」的预约吗？`,
       success: (res) => {
         if (res.confirm) {
-          Taro.showToast({ title: '已取消', icon: 'none' });
+          cancelReservation(reservation.id);
+          Taro.showToast({ title: '已取消预约', icon: 'success' });
         }
       }
     });
   };
 
+  const handleReschedule = (reservation: Reservation) => {
+    const activity = activities.find(a => a.id === reservation.activityId);
+    const availableDates = ['2026-07-05', '2026-07-12', '2026-07-19'];
+    Taro.showActionSheet({
+      itemList: availableDates.map(d => `${d} ${reservation.time}`),
+      success: (res) => {
+        rescheduleReservation(reservation.id, availableDates[res.tapIndex], reservation.time);
+        Taro.showToast({ title: '改签成功', icon: 'success' });
+      }
+    });
+  };
+
   const handleFeedback = (reservation: Reservation) => {
-    console.log('[Activity] 满意度反馈:', reservation.activityTitle);
-    Taro.showToast({ title: '满意度反馈', icon: 'none' });
+    setFeedbackId(reservation.id);
+    setFeedbackRating(5);
+    setFeedbackComment('');
   };
 
-  const getStatusClass = (status: Activity['status']) => {
-    return status;
+  const handleSubmitFeedback = () => {
+    if (!feedbackId) return;
+    if (!feedbackComment.trim()) {
+      Taro.showToast({ title: '请输入反馈内容', icon: 'none' });
+      return;
+    }
+    const now = new Date();
+    const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    submitFeedback(feedbackId, {
+      rating: feedbackRating,
+      comment: feedbackComment,
+      submitTime: timeStr
+    });
+    setFeedbackId(null);
+    Taro.showToast({ title: '感谢您的反馈', icon: 'success' });
   };
 
-  const getReservationStatusClass = (status: Reservation['status']) => {
-    return status;
-  };
+  const getStatusClass = (status: Activity['status']) => status;
 
-  const getReservationStatusLabel = (status: Reservation['status']) => {
-    const map = {
-      reserved: '已预约',
-      cancelled: '已取消',
-      completed: '已完成'
-    };
+  const getReservationStatusLabel = (status: Reservation['status'], hasFeedback?: boolean) => {
+    if (status === 'completed' && hasFeedback) return '已反馈';
+    const map = { reserved: '已预约', cancelled: '已取消', completed: '已完成' };
     return map[status];
+  };
+
+  const getReservationStatusClass = (status: Reservation['status'], hasFeedback?: boolean) => {
+    if (status === 'completed' && hasFeedback) return 'feedbacked';
+    return status;
   };
 
   const filteredActivities = activities.filter(activity => {
@@ -98,12 +142,49 @@ const ActivityPage: React.FC = () => {
     return activity.type === activeCategory;
   });
 
-  const isActivityFull = (activity: Activity) => {
-    return activity.signedUp >= activity.capacity;
-  };
+  const isActivityFull = (activity: Activity) => activity.signedUp >= activity.capacity;
+
+  const currentFeedbackReservation = reservations.find(r => r.id === feedbackId);
 
   return (
     <ScrollView className={styles.page} scrollY>
+      {feedbackId && currentFeedbackReservation ? (
+        <View className={styles.feedbackModal}>
+          <View className={styles.feedbackContent}>
+            <Text className={styles.feedbackTitle}>满意度反馈</Text>
+            <Text className={styles.feedbackActivity}>{currentFeedbackReservation.activityTitle}</Text>
+            <View className={styles.ratingSection}>
+              <Text className={styles.ratingLabel}>评分</Text>
+              <View className={styles.ratingStars}>
+                {[1, 2, 3, 4, 5].map(star => (
+                  <View key={star} className={styles.starBtn} onClick={() => setFeedbackRating(star)}>
+                    <Text style={{ fontSize: 40 }}>{star <= feedbackRating ? '⭐' : '☆'}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+            <View className={styles.commentSection}>
+              <Text className={styles.commentLabel}>留言</Text>
+              <Textarea
+                className={styles.commentTextarea}
+                placeholder="请输入您的感受和建议..."
+                value={feedbackComment}
+                onInput={(e) => setFeedbackComment(e.detail.value)}
+                maxlength={500}
+              />
+            </View>
+            <View className={styles.feedbackActions}>
+              <View className={styles.cancelFeedbackBtn} onClick={() => setFeedbackId(null)}>
+                <Text>取消</Text>
+              </View>
+              <View className={styles.submitFeedbackBtn} onClick={handleSubmitFeedback}>
+                <Text>提交反馈</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      ) : null}
+
       <View className={styles.tabs}>
         {tabs.map(tab => (
           <View
@@ -205,8 +286,8 @@ const ActivityPage: React.FC = () => {
               <View key={reservation.id} className={styles.reservationCard}>
                 <View className={styles.reservationHeader}>
                   <Text className={styles.reservationTitle}>{reservation.activityTitle}</Text>
-                  <View className={`${styles.reservationStatus} ${styles[getReservationStatusClass(reservation.status)]}`}>
-                    {getReservationStatusLabel(reservation.status)}
+                  <View className={`${styles.reservationStatus} ${styles[getReservationStatusClass(reservation.status, !!reservation.feedback)]}`}>
+                    {getReservationStatusLabel(reservation.status, !!reservation.feedback)}
                   </View>
                 </View>
                 <View className={styles.reservationInfo}>
@@ -240,12 +321,17 @@ const ActivityPage: React.FC = () => {
                       </View>
                     </>
                   )}
-                  {reservation.status === 'completed' && (
+                  {reservation.status === 'completed' && !reservation.feedback && (
                     <View
                       className={`${styles.actionBtn} ${styles.primary}`}
                       onClick={() => handleFeedback(reservation)}
                     >
                       满意度反馈
+                    </View>
+                  )}
+                  {reservation.status === 'completed' && reservation.feedback && (
+                    <View className={`${styles.actionBtn} ${styles.feedbackDone}`}>
+                      已反馈 ⭐{reservation.feedback.rating}
                     </View>
                   )}
                 </View>

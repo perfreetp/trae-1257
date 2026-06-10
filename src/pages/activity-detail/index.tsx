@@ -1,26 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import styles from './index.module.scss';
-import { getActivityById } from '@/data/activities';
+import { getActivityById, getActivityTypeLabel } from '@/data/activities';
+import { useAppStore } from '@/store/appStore';
 
 const ActivityDetailPage: React.FC = () => {
   const router = useRouter();
   const activityId = router.params.id || 'a1';
   const activity = getActivityById(activityId as string);
+  const addReservation = useAppStore(state => state.addReservation);
+  const reservations = useAppStore(state => state.reservations);
+  const [hasSignedUp, setHasSignedUp] = useState(false);
+
+  const checkIfSignedUp = () => {
+    if (!activity) return false;
+    return reservations.some(r => r.activityId === activity.id && r.status === 'reserved');
+  };
 
   const handleSignup = () => {
-    console.log('[ActivityDetail] 立即报名');
-    Taro.showToast({ title: '报名成功', icon: 'success' });
+    if (!activity) return;
+    if (checkIfSignedUp() || hasSignedUp) {
+      Taro.showToast({ title: '您已报名此活动', icon: 'none' });
+      return;
+    }
+    Taro.showModal({
+      title: '确认报名',
+      content: `确定报名参加「${activity.title}」吗？${activity.price === 0 ? '本活动免费' : `费用：¥${activity.price}/人`}`,
+      success: (res) => {
+        if (res.confirm) {
+          const now = new Date();
+          const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          addReservation({
+            id: `r_${Date.now()}`,
+            activityId: activity.id,
+            activityTitle: activity.title,
+            date: activity.date,
+            time: activity.time,
+            status: 'reserved',
+            ticketCount: 1,
+            reservationTime: timeStr
+          });
+          setHasSignedUp(true);
+          Taro.showToast({ title: '报名成功', icon: 'success' });
+        }
+      }
+    });
   };
 
   const handleShare = () => {
-    console.log('[ActivityDetail] 分享活动');
     Taro.navigateTo({ url: '/pages/share-poster/index' });
   };
 
   const handleRemind = () => {
-    console.log('[ActivityDetail] 设置提醒');
     Taro.showToast({ title: '已设置提醒', icon: 'none' });
   };
 
@@ -38,6 +70,8 @@ const ActivityDetailPage: React.FC = () => {
     ended: '已结束'
   };
 
+  const isSignedUp = checkIfSignedUp() || hasSignedUp;
+
   return (
     <View className={styles.page}>
       <ScrollView scrollY>
@@ -50,7 +84,7 @@ const ActivityDetailPage: React.FC = () => {
             {statusText[activity.status] || '报名中'}
           </View>
           <Text className={styles.title}>{activity.title}</Text>
-          <View className={styles.category}>{activity.category}</View>
+          <View className={styles.category}>{getActivityTypeLabel(activity.type)}</View>
           <View className={styles.metaList}>
             <View className={styles.metaItem}>
               <Text className={styles.icon}>📅</Text>
@@ -62,11 +96,11 @@ const ActivityDetailPage: React.FC = () => {
             </View>
             <View className={styles.metaItem}>
               <Text className={styles.icon}>👥</Text>
-              <Text>已报名 {activity.participants}/{activity.capacity} 人</Text>
+              <Text>已报名 {activity.signedUp}/{activity.capacity} 人</Text>
             </View>
             <View className={styles.metaItem}>
               <Text className={styles.icon}>⏱️</Text>
-              <Text>活动时长：约{activity.duration}</Text>
+              <Text>活动时长：{activity.duration}</Text>
             </View>
           </View>
         </View>
@@ -104,12 +138,9 @@ const ActivityDetailPage: React.FC = () => {
             温馨提示
           </Text>
           <Text className={styles.sectionContent}>
-            1. 请提前15分钟到达活动现场签到
-            {'\n'}
-            2. 活动期间请将手机调至静音
-            {'\n'}
-            3. 如需取消预约，请提前24小时操作
-            {'\n'}
+            1. 请提前15分钟到达活动现场签到{'\n'}
+            2. 活动期间请将手机调至静音{'\n'}
+            3. 如需取消预约，请提前24小时操作{'\n'}
             4. 儿童请在家长陪同下参与
           </Text>
         </View>
@@ -117,8 +148,14 @@ const ActivityDetailPage: React.FC = () => {
 
       <View className={styles.bottomBar}>
         <View className={styles.priceInfo}>
-          <Text className={styles.price}>{activity.price === '免费' ? '免费' : `¥${activity.price}`}</Text>
-          <Text className={styles.priceLabel}>每人</Text>
+          {activity.price === 0 ? (
+            <Text className={styles.price}>免费</Text>
+          ) : (
+            <>
+              <Text className={styles.price}>¥{activity.price}</Text>
+              <Text className={styles.priceLabel}>/人</Text>
+            </>
+          )}
         </View>
         <View className={styles.secondaryBtn} onClick={handleRemind}>
           <Text>🔔 提醒</Text>
@@ -127,7 +164,7 @@ const ActivityDetailPage: React.FC = () => {
           className={`${styles.primaryBtn} ${activity.status === 'ended' ? styles.disabled : ''}`}
           onClick={activity.status !== 'ended' ? handleSignup : undefined}
         >
-          <Text>{activity.status === 'ended' ? '已结束' : '立即报名'}</Text>
+          <Text>{activity.status === 'ended' ? '已结束' : isSignedUp ? '已报名' : '立即报名'}</Text>
         </View>
       </View>
     </View>

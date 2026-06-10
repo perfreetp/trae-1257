@@ -2,10 +2,13 @@ import React from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { userInfo, checkInRecords, visitNotes, favoriteItems } from '@/data/user';
-import type { CheckInRecord, VisitNote } from '@/types/user';
+import { userInfo, checkInRecords, favoriteItems } from '@/data/user';
+import { useAppStore } from '@/store/appStore';
+import type { VisitNote } from '@/types/user';
 
 const MinePage: React.FC = () => {
+  const notes = useAppStore(state => state.notes);
+
   const menuItems = [
     { key: 'checkin', icon: '📍', label: '打卡盖章', type: 'iconCheckin' },
     { key: 'note', icon: '📝', label: '参观笔记', type: 'iconNote' },
@@ -29,7 +32,6 @@ const MinePage: React.FC = () => {
   ];
 
   const handleMenuClick = (key: string) => {
-    console.log('[Mine] 点击菜单:', key);
     switch (key) {
       case 'checkin':
         Taro.navigateTo({ url: '/pages/checkin/index' });
@@ -44,7 +46,7 @@ const MinePage: React.FC = () => {
         Taro.navigateTo({ url: '/pages/share-poster/index' });
         break;
       case 'feedback':
-        Taro.showToast({ title: '满意度反馈', icon: 'none' });
+        Taro.switchTab({ url: '/pages/activity/index' });
         break;
       case 'setting':
         Taro.showToast({ title: '设置', icon: 'none' });
@@ -53,7 +55,6 @@ const MinePage: React.FC = () => {
   };
 
   const handleStampClick = (stamp: any) => {
-    console.log('[Mine] 点击印章:', stamp.locationName);
     if (stamp.collected) {
       Taro.showToast({ title: stamp.locationName, icon: 'none' });
     } else {
@@ -62,17 +63,14 @@ const MinePage: React.FC = () => {
   };
 
   const handleNoteClick = (note: VisitNote) => {
-    console.log('[Mine] 点击笔记:', note.title);
     Taro.showToast({ title: note.title, icon: 'none' });
   };
 
   const handleMoreStamp = () => {
-    console.log('[Mine] 查看更多印章');
     Taro.navigateTo({ url: '/pages/checkin/index' });
   };
 
   const handleMoreNote = () => {
-    console.log('[Mine] 查看更多笔记');
     Taro.showToast({ title: '更多笔记', icon: 'none' });
   };
 
@@ -105,7 +103,7 @@ const MinePage: React.FC = () => {
             <Text className={styles.statLabel}>收藏藏品</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statNumber}>{userInfo.noteCount}</Text>
+            <Text className={styles.statNumber}>{notes.length}</Text>
             <Text className={styles.statLabel}>参观笔记</Text>
           </View>
         </View>
@@ -170,7 +168,7 @@ const MinePage: React.FC = () => {
             <Text className={styles.arrow}>›</Text>
           </View>
         </View>
-        {visitNotes.slice(0, 3).map(note => (
+        {notes.slice(0, 3).map(note => (
           <View
             key={note.id}
             className={styles.noteCard}

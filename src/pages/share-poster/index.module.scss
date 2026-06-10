@@ -9,10 +9,10 @@
 
 .posterPreview {
   background: $color-bg-card;
-  border-radius: $radius-card;
+  border-radius: $radius-lg;
   overflow: hidden;
   margin-bottom: 32rpx;
-  box-shadow: $shadow-base;
+  box-shadow: $shadow-card;
 }
 
 .posterContent {
@@ -145,7 +145,7 @@
 
 .templateSelector {
   background: $color-bg-card;
-  border-radius: $radius-card;
+  border-radius: $radius-lg;
   padding: 24rpx;
   margin-bottom: 32rpx;
 

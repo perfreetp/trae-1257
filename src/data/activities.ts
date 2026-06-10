@@ -9,13 +9,20 @@ export const activities: Activity[] = [
     coverImage: 'https://picsum.photos/id/1061/750/420',
     date: '2026-06-15',
     time: '14:00-16:00',
+    duration: '2小时',
     location: '学术报告厅',
     capacity: 200,
     signedUp: 156,
     price: 0,
     type: 'lecture',
     status: 'upcoming',
-    isReservation: true
+    isReservation: true,
+    guest: {
+      name: '樊锦诗',
+      title: '敦煌研究院名誉院长',
+      bio: '被誉为"敦煌女儿"，长期从事敦煌文物保护与研究工作，为敦煌艺术的传承做出了卓越贡献。',
+      avatar: 'https://picsum.photos/id/64/200/200'
+    }
   },
   {
     id: 'a2',
@@ -25,13 +32,20 @@ export const activities: Activity[] = [
     coverImage: 'https://picsum.photos/id/1082/750/420',
     date: '2026-06-18',
     time: '10:00-12:00',
+    duration: '2小时',
     location: '陶艺体验室',
     capacity: 20,
     signedUp: 18,
     price: 128,
     type: 'workshop',
     status: 'upcoming',
-    isReservation: true
+    isReservation: true,
+    guest: {
+      name: '李明远',
+      title: '高级陶艺师',
+      bio: '从事陶艺创作20余年，擅长传统青瓷与现代陶艺的融合创新，作品多次获国家级大奖。',
+      avatar: 'https://picsum.photos/id/91/200/200'
+    }
   },
   {
     id: 'a3',
@@ -41,6 +55,7 @@ export const activities: Activity[] = [
     coverImage: 'https://picsum.photos/id/1025/750/420',
     date: '2026-06-20',
     time: '09:30-11:30',
+    duration: '2小时',
     location: '第三展厅',
     capacity: 30,
     signedUp: 25,
@@ -57,13 +72,20 @@ export const activities: Activity[] = [
     coverImage: 'https://picsum.photos/id/1083/750/420',
     date: '2026-06-22',
     time: '19:00-21:00',
+    duration: '2小时',
     location: '古琴馆',
     capacity: 50,
     signedUp: 42,
     price: 188,
     type: 'performance',
     status: 'upcoming',
-    isReservation: true
+    isReservation: true,
+    guest: {
+      name: '陈雅韵',
+      title: '古琴演奏家',
+      bio: '国家级非物质文化遗产古琴艺术传承人，师从广陵派大师，演奏风格古朴典雅。',
+      avatar: 'https://picsum.photos/id/65/200/200'
+    }
   },
   {
     id: 'a5',
@@ -73,13 +95,20 @@ export const activities: Activity[] = [
     coverImage: 'https://picsum.photos/id/1073/750/420',
     date: '2026-06-25',
     time: '14:00-16:30',
+    duration: '2.5小时',
     location: '书法教室',
     capacity: 15,
     signedUp: 12,
     price: 98,
     type: 'workshop',
     status: 'upcoming',
-    isReservation: true
+    isReservation: true,
+    guest: {
+      name: '王墨轩',
+      title: '书法教育家',
+      bio: '中国书法家协会会员，从事书法教育15年，倡导"以书养心"的教学理念。',
+      avatar: 'https://picsum.photos/id/177/200/200'
+    }
   },
   {
     id: 'a6',
@@ -89,6 +118,7 @@ export const activities: Activity[] = [
     coverImage: 'https://picsum.photos/id/1059/750/420',
     date: '2026-06-28',
     time: '10:00-11:30',
+    duration: '1.5小时',
     location: '文物修复中心',
     capacity: 10,
     signedUp: 8,
@@ -105,13 +135,20 @@ export const activities: Activity[] = [
     coverImage: 'https://picsum.photos/id/1080/750/420',
     date: '2026-07-02',
     time: '14:30-16:30',
+    duration: '2小时',
     location: '多功能厅',
     capacity: 100,
     signedUp: 67,
     price: 50,
     type: 'lecture',
     status: 'upcoming',
-    isReservation: true
+    isReservation: true,
+    guest: {
+      name: '张檀香',
+      title: '古典家具鉴赏家',
+      bio: '故宫博物院特聘研究员，专注明清家具研究30年，出版多部专著。',
+      avatar: 'https://picsum.photos/id/180/200/200'
+    }
   },
   {
     id: 'a8',
@@ -121,6 +158,7 @@ export const activities: Activity[] = [
     coverImage: 'https://picsum.photos/id/1039/750/420',
     date: '2026-06-10',
     time: '09:00-11:00',
+    duration: '2小时',
     location: '民俗体验室',
     capacity: 25,
     signedUp: 25,

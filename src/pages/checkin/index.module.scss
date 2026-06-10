@@ -8,11 +8,11 @@
 
 .stampCard {
   background: $color-bg-card;
-  border-radius: $radius-card;
+  border-radius: $radius-lg;
   padding: 48rpx 32rpx;
   text-align: center;
   margin-bottom: 24rpx;
-  box-shadow: $shadow-base;
+  box-shadow: $shadow-card;
 
   .stampCircle {
     width: 240rpx;
@@ -68,7 +68,7 @@
   .checkinBtn {
     width: 100%;
     height: 88rpx;
-    background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+    background: linear-gradient(135deg, $color-primary 0%, $color-gold 100%);
     color: $color-text-white;
     font-size: $font-size-md;
     font-weight: $font-weight-semibold;
@@ -92,7 +92,7 @@
 
 .stampCollection {
   background: $color-bg-card;
-  border-radius: $radius-card;
+  border-radius: $radius-lg;
   padding: 32rpx;
   margin-bottom: 24rpx;
 
@@ -163,7 +163,7 @@
 
 .tipSection {
   background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
-  border-radius: $radius-card;
+  border-radius: $radius-lg;
   padding: 24rpx;
 
   .tipTitle {

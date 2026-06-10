@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { exhibits } from '@/data/exhibitions';
+import { exhibits, getExhibitById } from '@/data/exhibitions';
 
 const ScanPage: React.FC = () => {
   const [isLightOn, setIsLightOn] = useState(false);
+  const [showArOverlay, setShowArOverlay] = useState(false);
+  const [arExhibit, setArExhibit] = useState(exhibits[0]);
 
   const scanHistory = [
     { id: 'h1', exhibitId: 'e1', name: '敦煌飞天壁画', desc: '唐代·莫高窟第320窟', time: '今天 14:30' },
@@ -14,53 +16,104 @@ const ScanPage: React.FC = () => {
   ];
 
   const handleScanCode = () => {
-    console.log('[Scan] 扫码识别展品');
-    Taro.scanCode({
-      onlyFromCamera: false,
-      scanType: ['qrCode', 'barCode'],
-      success: (res) => {
-        console.log('[Scan] 扫码成功:', res.result);
-        Taro.navigateTo({
-          url: `/pages/exhibit-detail/index?id=${res.result}`
-        });
-      },
-      fail: (err) => {
-        console.error('[Scan] 扫码失败:', err);
-        Taro.showToast({ title: '扫码失败，请重试', icon: 'none' });
-      }
-    });
+    const mockExhibit = exhibits[Math.floor(Math.random() * exhibits.length)];
+    setArExhibit(mockExhibit);
+    setShowArOverlay(true);
   };
 
   const handleArScan = () => {
-    console.log('[Scan] AR识别');
-    Taro.showToast({ title: 'AR识别功能即将上线', icon: 'none' });
+    const mockExhibit = exhibits.find(e => e.arEnabled) || exhibits[0];
+    setArExhibit(mockExhibit);
+    setShowArOverlay(true);
+  };
+
+  const handleCloseAr = () => {
+    setShowArOverlay(false);
+  };
+
+  const handleGoToExhibit = (exhibitId: string) => {
+    setShowArOverlay(false);
+    Taro.navigateTo({
+      url: `/pages/exhibit-detail/index?id=${exhibitId}`
+    });
   };
 
   const handleAlbum = () => {
-    console.log('[Scan] 从相册选择');
     Taro.showToast({ title: '从相册选择', icon: 'none' });
   };
 
   const handleLight = () => {
-    console.log('[Scan] 切换闪光灯');
     setIsLightOn(!isLightOn);
     Taro.showToast({ title: isLightOn ? '闪光灯已关闭' : '闪光灯已开启', icon: 'none' });
   };
 
   const handleHistoryClick = (item: typeof scanHistory[0]) => {
-    console.log('[Scan] 点击历史记录:', item.name);
     Taro.navigateTo({
       url: `/pages/exhibit-detail/index?id=${item.exhibitId}`
     });
   };
 
   const handleMoreClick = () => {
-    console.log('[Scan] 查看更多历史');
     Taro.showToast({ title: '更多记录', icon: 'none' });
   };
 
   return (
     <ScrollView className={styles.page} scrollY>
+      {showArOverlay && (
+        <View className={styles.arOverlay}>
+          <View className={styles.arCamera}>
+            <Image src={arExhibit.image} mode="aspectFill" className={styles.arBgImage} />
+            <View className={styles.arScanFrame}>
+              <View className={`${styles.arCorner} ${styles.arTopLeft}`} />
+              <View className={`${styles.arCorner} ${styles.arTopRight}`} />
+              <View className={`${styles.arCorner} ${styles.arBottomLeft}`} />
+              <View className={`${styles.arCorner} ${styles.arBottomRight}`} />
+            </View>
+            <View className={styles.arInfoCard}>
+              <View className={styles.arInfoHeader}>
+                <Text className={styles.arDetectIcon}>✨</Text>
+                <Text className={styles.arDetectLabel}>AR 识别结果</Text>
+              </View>
+              <Text className={styles.arExhibitName}>{arExhibit.name}</Text>
+              <Text className={styles.arExhibitSubtitle}>{arExhibit.subtitle}</Text>
+              <View className={styles.arInfoGrid}>
+                <View className={styles.arInfoItem}>
+                  <Text className={styles.arInfoIcon}>⏰</Text>
+                  <Text className={styles.arInfoLabel}>年代</Text>
+                  <Text className={styles.arInfoValue}>{arExhibit.era}</Text>
+                </View>
+                <View className={styles.arInfoItem}>
+                  <Text className={styles.arInfoIcon}>📋</Text>
+                  <Text className={styles.arInfoLabel}>类别</Text>
+                  <Text className={styles.arInfoValue}>{arExhibit.category}</Text>
+                </View>
+                <View className={styles.arInfoItem}>
+                  <Text className={styles.arInfoIcon}>📍</Text>
+                  <Text className={styles.arInfoLabel}>位置</Text>
+                  <Text className={styles.arInfoValue}>{arExhibit.location}</Text>
+                </View>
+                <View className={styles.arInfoItem}>
+                  <Text className={styles.arInfoIcon}>🎧</Text>
+                  <Text className={styles.arInfoLabel}>讲解</Text>
+                  <Text className={styles.arInfoValue}>{arExhibit.audioDuration}</Text>
+                </View>
+              </View>
+              <View className={styles.arActions}>
+                <View className={styles.arListenBtn} onClick={() => handleGoToExhibit(arExhibit.id)}>
+                  <Text>🎧 收听讲解</Text>
+                </View>
+                <View className={styles.arDetailBtn} onClick={() => handleGoToExhibit(arExhibit.id)}>
+                  <Text>📖 查看详情</Text>
+                </View>
+              </View>
+            </View>
+            <View className={styles.arCloseBtn} onClick={handleCloseAr}>
+              <Text>✕</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
       <View className={styles.scanArea} onClick={handleScanCode}>
         <View className={styles.scanFrame}>
           <View className={`${styles.corner} ${styles.topLeft}`} />
