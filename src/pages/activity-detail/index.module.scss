@@ -22,10 +22,15 @@
   margin-bottom: 16rpx;
   position: relative;
 
+  .statusRow {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    margin-bottom: 16rpx;
+  }
+
   .statusBadge {
-    position: absolute;
-    top: 32rpx;
-    right: 32rpx;
+    position: static;
     padding: 8rpx 20rpx;
     border-radius: $radius-round;
     font-size: $font-size-xs;
@@ -47,12 +52,33 @@
     }
   }
 
+  .reservationStatusBadge {
+    padding: 8rpx 20rpx;
+    border-radius: $radius-round;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+
+    &.reserved {
+      background: #FFF3E0;
+      color: #E65100;
+    }
+
+    &.cancelled {
+      background: #FFEBEE;
+      color: #C62828;
+    }
+
+    &.completed {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+  }
+
   .title {
     font-size: 36rpx;
     font-weight: $font-weight-bold;
     color: $color-text-primary;
     margin-bottom: 12rpx;
-    padding-right: 120rpx;
   }
 
   .category {
@@ -62,13 +88,33 @@
     color: $color-primary;
     font-size: $font-size-xs;
     border-radius: $radius-sm;
-    margin-bottom: 20rpx;
+    margin-bottom: 16rpx;
+  }
+
+  .rescheduleHint {
+    display: flex;
+    align-items: center;
+    gap: 6rpx;
+    margin-bottom: 16rpx;
+    padding: 12rpx 16rpx;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: $radius-sm;
+
+    .rescheduleIcon {
+      font-size: $font-size-sm;
+    }
+
+    .rescheduleText {
+      font-size: $font-size-xs;
+      color: $color-gold;
+      font-weight: $font-weight-medium;
+    }
   }
 
   .metaList {
     .metaItem {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       padding: 12rpx 0;
       font-size: $font-size-sm;
       color: $color-text-secondary;
@@ -77,6 +123,25 @@
         width: 40rpx;
         font-size: $font-size-md;
         margin-right: 12rpx;
+        flex-shrink: 0;
+        line-height: 1.5;
+      }
+
+      .dateInfo {
+        display: flex;
+        flex-direction: column;
+        gap: 4rpx;
+
+        .currentDate {
+          color: $color-text-primary;
+          font-weight: $font-weight-medium;
+        }
+
+        .oldDate {
+          font-size: $font-size-xs;
+          color: $color-text-tertiary;
+          text-decoration: line-through;
+        }
       }
     }
   }
@@ -221,6 +286,16 @@
     &.disabled {
       background: $color-border;
       color: $color-text-tertiary;
+    }
+
+    &.cancelled {
+      background: $color-bg-secondary;
+      color: $color-text-tertiary;
+    }
+
+    &.feedbackDone {
+      background: #E8F5E9;
+      color: #2E7D32;
     }
   }
 }

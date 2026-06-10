@@ -148,6 +148,33 @@ const ActivityPage: React.FC = () => {
 
   const isActivityFull = (activity: Activity) => activity.signedUp >= activity.capacity;
 
+  const getActivityReservation = (activityId: string) => {
+    return reservations.find(r => r.activityId === activityId);
+  };
+
+  const getSignUpBtnText = (activity: Activity) => {
+    if (isActivityFull(activity)) return '已满员';
+    const reservation = getActivityReservation(activity.id);
+    if (reservation) {
+      if (reservation.status === 'reserved') return '已预约';
+      if (reservation.status === 'cancelled') return '已取消';
+      if (reservation.status === 'completed' && reservation.feedback) return '已反馈';
+      if (reservation.status === 'completed') return '已完成';
+    }
+    return '立即报名';
+  };
+
+  const getSignUpBtnClass = (activity: Activity) => {
+    if (isActivityFull(activity)) return styles.full;
+    const reservation = getActivityReservation(activity.id);
+    if (reservation) {
+      if (reservation.status === 'reserved') return styles.reserved;
+      if (reservation.status === 'cancelled') return styles.cancelled;
+      if (reservation.status === 'completed') return styles.completed;
+    }
+    return '';
+  };
+
   const currentFeedbackReservation = reservations.find(r => r.id === feedbackId);
 
   return (
@@ -266,10 +293,10 @@ const ActivityPage: React.FC = () => {
                         )}
                       </View>
                       <View
-                        className={`${styles.signUpBtn} ${isActivityFull(activity) ? styles.full : ''}`}
+                        className={`${styles.signUpBtn} ${getSignUpBtnClass(activity)}`}
                         onClick={(e) => handleSignUp(e, activity)}
                       >
-                        {isActivityFull(activity) ? '已满员' : '立即报名'}
+                        {getSignUpBtnText(activity)}
                       </View>
                     </View>
                   </View>

@@ -43,6 +43,7 @@ const RouteDetailPage: React.FC = () => {
   const [currentRecordId, setCurrentRecordId] = useState<string | null>(null);
   const [currentStopIndex, setCurrentStopIndex] = useState(0);
   const [completedStops, setCompletedStops] = useState<string[]>([]);
+  const [viewedExhibits, setViewedExhibits] = useState<string[]>([]);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -54,6 +55,7 @@ const RouteDetailPage: React.FC = () => {
       setCurrentRecordId(active.id);
       setCurrentStopIndex(active.currentStopIndex);
       setCompletedStops(active.completedStops);
+      setViewedExhibits(active.viewedExhibits || []);
       const start = new Date(active.startTime).getTime();
       const now = Date.now();
       setElapsedSeconds(Math.floor((now - start) / 1000));
@@ -93,6 +95,7 @@ const RouteDetailPage: React.FC = () => {
     setCurrentRecordId(record.id);
     setCurrentStopIndex(0);
     setCompletedStops([]);
+    setViewedExhibits([]);
     setElapsedSeconds(0);
     Taro.showToast({ title: '开始导览', icon: 'success' });
   };
@@ -100,7 +103,7 @@ const RouteDetailPage: React.FC = () => {
   const handleNextStop = () => {
     if (!currentRecordId || !route) return;
     const currentStop = route.stops[currentStopIndex];
-    if (currentStop && currentStop.exhibitId && !completedStops.includes(currentStop.id + '_visited')) {
+    if (currentStop && currentStop.exhibitId && !viewedExhibits.includes(currentStop.exhibitId)) {
       Taro.showModal({
         title: '还没听讲解哦',
         content: `您还未查看「${currentStop.name}」的展品讲解，确定要前往下一站吗？`,
@@ -193,7 +196,25 @@ const RouteDetailPage: React.FC = () => {
     Taro.showToast({ title: '已保存到我的路线', icon: 'none' });
   };
 
-  const handleStopClick = (stop: RouteStop) => {
+  const handleStopClick = (stop: RouteStop, index: number) => {
+    if (isGuiding && index !== currentStopIndex) {
+      Taro.showModal({
+        title: '路线偏离提醒',
+        content: `当前正在「${route?.stops[currentStopIndex]?.name}」导览中，确定要跳转到「${stop.name}」吗？返回后可继续当前导览进度。`,
+        confirmText: '确认跳转',
+        cancelText: '继续导览',
+        success: (res) => {
+          if (res.confirm) {
+            doStopNavigate(stop);
+          }
+        }
+      });
+    } else {
+      doStopNavigate(stop);
+    }
+  };
+
+  const doStopNavigate = (stop: RouteStop) => {
     if (stop.exhibitId) {
       Taro.navigateTo({
         url: `/pages/exhibit-detail/index?id=${stop.exhibitId}`
@@ -203,11 +224,27 @@ const RouteDetailPage: React.FC = () => {
     }
   };
 
-  const handleExhibitDetail = (e: React.MouseEvent, exhibitId: string) => {
+  const handleExhibitDetail = (e: React.MouseEvent, exhibitId: string, stopIndex: number, stopName: string) => {
     e.stopPropagation();
-    Taro.navigateTo({
-      url: `/pages/exhibit-detail/index?id=${exhibitId}`
-    });
+    if (isGuiding && stopIndex !== currentStopIndex) {
+      Taro.showModal({
+        title: '路线偏离提醒',
+        content: `当前正在「${route?.stops[currentStopIndex]?.name}」导览中，确定要跳转到「${stopName}」的展品讲解吗？返回后可继续当前导览进度。`,
+        confirmText: '确认跳转',
+        cancelText: '继续导览',
+        success: (res) => {
+          if (res.confirm) {
+            Taro.navigateTo({
+              url: `/pages/exhibit-detail/index?id=${exhibitId}`
+            });
+          }
+        }
+      });
+    } else {
+      Taro.navigateTo({
+        url: `/pages/exhibit-detail/index?id=${exhibitId}`
+      });
+    }
   };
 
   if (!route) {
@@ -277,7 +314,7 @@ const RouteDetailPage: React.FC = () => {
               {currentStop.exhibitId && (
                 <View
                   className={styles.currentStopBtn}
-                  onClick={(e) => handleExhibitDetail(e, currentStop.exhibitId!)}
+                  onClick={(e) => handleExhibitDetail(e, currentStop.exhibitId!, currentStopIndex, currentStop.name)}
                 >
                   🎧 查看展品讲解
                 </View>
@@ -355,7 +392,7 @@ const RouteDetailPage: React.FC = () => {
                   </View>
                   <View
                     className={styles.stopContent}
-                    onClick={() => handleStopClick(stop)}
+                    onClick={() => handleStopClick(stop, index)}
                   >
                     <Text className={styles.stopName}>
                       {isCurrent && <Text className={styles.currentDot}>● </Text>}
@@ -367,7 +404,7 @@ const RouteDetailPage: React.FC = () => {
                       {stop.exhibitId && (
                         <View
                           className={styles.actionBtn}
-                          onClick={(e) => handleExhibitDetail(e, stop.exhibitId!)}
+                          onClick={(e) => handleExhibitDetail(e, stop.exhibitId!, index, stop.name)}
                         >
                           🎧 展品讲解
                         </View>

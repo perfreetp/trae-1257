@@ -19,6 +19,7 @@ const MinePage: React.FC = () => {
   const notes = useAppStore(state => state.notes);
   const timeline = useAppStore(state => state.timeline);
   const visitRecords = useAppStore(state => state.visitRecords);
+  const checkInRecordsData = checkInRecords;
 
   const [activeTab, setActiveTab] = useState<'calendar' | 'timeline' | 'notes'>('calendar');
   const [currentMonth, setCurrentMonth] = useState(() => {
@@ -27,15 +28,76 @@ const MinePage: React.FC = () => {
   });
   const [selectedDate, setSelectedDate] = useState<string>(getTodayStr());
 
+  const inProgressVisits = useMemo(() => {
+    return visitRecords.filter(r => r.status === 'in_progress');
+  }, [visitRecords]);
+
+  const completedVisitRecords = useMemo(() => {
+    return visitRecords.filter(r => r.status === 'completed');
+  }, [visitRecords]);
+
   const recordsByDate = useMemo(() => {
     const map: Record<string, TimelineRecord[]> = {};
+
     timeline.forEach(record => {
       const dateKey = getDateKey(record.timestamp);
       if (!map[dateKey]) map[dateKey] = [];
       map[dateKey].push(record);
     });
+
+    completedVisitRecords.forEach(record => {
+      if (record.endTime) {
+        const dateKey = getDateKey(record.endTime);
+        if (!map[dateKey]) map[dateKey] = [];
+        map[dateKey].push({
+          id: `vr_${record.id}`,
+          type: 'route_complete',
+          title: `路线参观完成`,
+          description: `完成「${record.routeName}」全部${record.startStops.length}个站点`,
+          itemId: record.routeId,
+          itemType: 'route',
+          timestamp: record.endTime,
+          icon: '🏆'
+        });
+      }
+    });
+
+    notes.forEach(note => {
+      const dateKey = getDateKey(note.createTime);
+      if (!map[dateKey]) map[dateKey] = [];
+      map[dateKey].push({
+        id: `note_${note.id}`,
+        type: 'note_create',
+        title: `笔记已保存`,
+        description: `「${note.title}」${note.exhibitName ? ` - ${note.exhibitName}` : ''}`,
+        itemId: note.exhibitId || note.id,
+        itemType: note.exhibitId ? 'exhibit' : 'activity',
+        timestamp: note.createTime,
+        icon: '📝'
+      });
+    });
+
+    checkInRecordsData.forEach(record => {
+      const dateKey = getDateKey(record.date);
+      if (!map[dateKey]) map[dateKey] = [];
+      map[dateKey].push({
+        id: `ci_${record.id}`,
+        type: 'scan_exhibit',
+        title: `打卡盖章`,
+        description: `在「${record.locationName}」完成打卡，获得 ${record.points} 积分`,
+        itemId: record.id,
+        itemType: 'exhibit',
+        timestamp: record.date,
+        icon: '📍'
+      });
+    });
+
+    Object.keys(map).forEach(dateKey => {
+      map[dateKey].sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    });
+
     return map;
-  }, [timeline]);
+  }, [timeline, completedVisitRecords, notes, checkInRecordsData]);
 
   const getCalendarDays = () => {
     const [year, month] = currentMonth.split('-').map(Number);
@@ -212,6 +274,10 @@ const MinePage: React.FC = () => {
     return map[type] || '';
   };
 
+  const handleContinueVisit = (routeId: string) => {
+    Taro.navigateTo({ url: `/pages/route-detail/index?id=${routeId}` });
+  };
+
   return (
     <ScrollView className={styles.page} scrollY>
       <View className={styles.profileHeader}>
@@ -297,6 +363,32 @@ const MinePage: React.FC = () => {
       </View>
 
       <View className={styles.recordSection}>
+        {inProgressVisits.length > 0 && (
+          <View className={styles.inProgressSection}>
+            <Text className={styles.inProgressTitle}>
+              <Text className={styles.accent}>·</Text> 未完成行程
+            </Text>
+            {inProgressVisits.map(visit => (
+              <View
+                key={visit.id}
+                className={styles.inProgressCard}
+                onClick={() => handleContinueVisit(visit.routeId)}
+              >
+                <View className={styles.inProgressIcon}>🚶</View>
+                <View className={styles.inProgressInfo}>
+                  <Text className={styles.inProgressRouteName}>{visit.routeName}</Text>
+                  <Text className={styles.inProgressProgress}>
+                    进度：{visit.currentStopIndex}/{visit.startStops.length} 站 · 开始于 {visit.startTime.split(' ')[1]}
+                  </Text>
+                </View>
+                <View className={styles.inProgressBtn}>
+                  <Text>继续导览 ›</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
         <View className={styles.tabHeader}>
           <View
             className={`${styles.tabItem} ${activeTab === 'calendar' ? styles.active : ''}`}

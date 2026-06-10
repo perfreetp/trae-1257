@@ -45,6 +45,7 @@ export interface RouteVisitRecord {
   routeName: string;
   startStops: RouteStop[];
   completedStops: string[];
+  viewedExhibits: string[];
   currentStopIndex: number;
   startTime: string;
   endTime?: string;

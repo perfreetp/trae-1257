@@ -50,6 +50,7 @@ interface AppState extends PersistState {
   advanceToNextStop: (recordId: string) => void;
   completeRouteVisit: (recordId: string) => void;
   getActiveVisitRecord: (routeId: string) => RouteVisitRecord | undefined;
+  markExhibitViewed: (recordId: string, exhibitId: string) => void;
 
   addTimelineRecord: (record: TimelineRecord) => void;
 }
@@ -57,10 +58,14 @@ interface AppState extends PersistState {
 const getInitialState = (): PersistState => {
   const saved = loadFromStorage<PersistState | null>(STORAGE_KEY, null);
   if (saved) {
+    const migratedVisitRecords = (saved.visitRecords || []).map(record => ({
+      ...record,
+      viewedExhibits: record.viewedExhibits || []
+    }));
     return {
       reservations: saved.reservations || [...initialReservations],
       notes: saved.notes || [...initialNotes],
-      visitRecords: saved.visitRecords || [],
+      visitRecords: migratedVisitRecords,
       timeline: saved.timeline || []
     };
   }
@@ -213,6 +218,7 @@ export const useAppStore = create<AppState>((set, get) => {
         routeName: route.name,
         startStops: [...route.stops],
         completedStops: [],
+        viewedExhibits: [],
         currentStopIndex: 0,
         startTime: getNowTimeStr(),
         status: 'in_progress'
@@ -295,6 +301,22 @@ export const useAppStore = create<AppState>((set, get) => {
       return state.visitRecords.find(
         r => r.routeId === routeId && r.status === 'in_progress'
       );
+    },
+
+    markExhibitViewed: (recordId, exhibitId) => {
+      set((state) => {
+        const newVisitRecords = state.visitRecords.map(r => {
+          if (r.id === recordId && !r.viewedExhibits.includes(exhibitId)) {
+            return {
+              ...r,
+              viewedExhibits: [...r.viewedExhibits, exhibitId]
+            };
+          }
+          return r;
+        });
+        persist({ visitRecords: newVisitRecords });
+        return { visitRecords: newVisitRecords };
+      });
     },
 
     addTimelineRecord: (record) => {

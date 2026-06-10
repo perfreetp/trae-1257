@@ -274,6 +274,26 @@
       background: $color-text-disabled;
       color: $color-text-white;
     }
+
+    &.full {
+      background: $color-text-disabled;
+      color: $color-text-white;
+    }
+
+    &.reserved {
+      background: #FFF3E0;
+      color: #E65100;
+    }
+
+    &.cancelled {
+      background: $color-bg-secondary;
+      color: $color-text-tertiary;
+    }
+
+    &.completed {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
   }
 
   .capacityInfo {

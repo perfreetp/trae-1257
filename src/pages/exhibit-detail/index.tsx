@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, Input, Textarea } from '@tarojs/components';
-import Taro, { useRouter } from '@tarojs/taro';
+import Taro, { useRouter, useDidShow } from '@tarojs/taro';
 import styles from './index.module.scss';
 import { getExhibitById } from '@/data/exhibitions';
 import { useAppStore } from '@/store/appStore';
@@ -24,6 +24,13 @@ const ExhibitDetailPage: React.FC = () => {
 
   const addNote = useAppStore(state => state.addNote);
   const addTimelineRecord = useAppStore(state => state.addTimelineRecord);
+  const visitRecords = useAppStore(state => state.visitRecords);
+  const markExhibitViewed = useAppStore(state => state.markExhibitViewed);
+
+  const getNowTimeStr = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  };
 
   const modes = [
     { key: 'normal', icon: '🎧', label: '标准讲解' },
@@ -38,6 +45,33 @@ const ExhibitDetailPage: React.FC = () => {
       setIsFavorite(exhibit.isFavorite || false);
     }
   }, [exhibit]);
+
+  useDidShow(() => {
+    if (!exhibit) return;
+    const activeVisit = visitRecords.find(r => r.status === 'in_progress');
+    if (activeVisit) {
+      const currentStop = activeVisit.startStops[activeVisit.currentStopIndex];
+      if (currentStop?.exhibitId === exhibit.id && !activeVisit.viewedExhibits.includes(exhibit.id)) {
+        markExhibitViewed(activeVisit.id, exhibit.id);
+      }
+    }
+    const hasViewed = visitRecords.some(r =>
+      r.viewedExhibits.includes(exhibit.id)
+    );
+    if (!hasViewed) {
+      const timeStr = getNowTimeStr();
+      addTimelineRecord({
+        id: `tl_${Date.now()}`,
+        type: 'scan_exhibit',
+        title: '查看展品详情',
+        description: `查看「${exhibit.name}」的展品讲解`,
+        itemId: exhibit.id,
+        itemType: 'exhibit',
+        timestamp: timeStr,
+        icon: '🔍'
+      });
+    }
+  });
 
   const handleModeChange = (mode: string) => {
     setActiveMode(mode);
