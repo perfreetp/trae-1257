@@ -38,3 +38,16 @@ export interface CrowdInfo {
   count: number;
   capacity: number;
 }
+
+export interface RouteVisitRecord {
+  id: string;
+  routeId: string;
+  routeName: string;
+  startStops: RouteStop[];
+  completedStops: string[];
+  currentStopIndex: number;
+  startTime: string;
+  endTime?: string;
+  duration?: string;
+  status: 'in_progress' | 'completed';
+}

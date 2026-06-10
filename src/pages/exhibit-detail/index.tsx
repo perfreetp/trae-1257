@@ -23,6 +23,7 @@ const ExhibitDetailPage: React.FC = () => {
   const [showArOverlay, setShowArOverlay] = useState(false);
 
   const addNote = useAppStore(state => state.addNote);
+  const addTimelineRecord = useAppStore(state => state.addTimelineRecord);
 
   const modes = [
     { key: 'normal', icon: '🎧', label: '标准讲解' },
@@ -95,7 +96,20 @@ const ExhibitDetailPage: React.FC = () => {
   };
 
   const handleArView = () => {
+    if (!exhibit) return;
     setShowArOverlay(true);
+    const now = new Date();
+    const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    addTimelineRecord({
+      id: `tl_${Date.now()}`,
+      type: 'scan_exhibit',
+      title: 'AR查看展品',
+      description: `通过AR模式查看「${exhibit.name}」`,
+      itemId: exhibit.id,
+      itemType: 'exhibit',
+      timestamp: timeStr,
+      icon: '📱'
+    });
   };
 
   const handleCloseAr = () => {

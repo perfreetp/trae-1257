@@ -3,11 +3,18 @@ import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import { exhibits, getExhibitById } from '@/data/exhibitions';
+import { useAppStore } from '@/store/appStore';
+
+const getNowTimeStr = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+};
 
 const ScanPage: React.FC = () => {
   const [isLightOn, setIsLightOn] = useState(false);
   const [showArOverlay, setShowArOverlay] = useState(false);
   const [arExhibit, setArExhibit] = useState(exhibits[0]);
+  const addTimelineRecord = useAppStore(state => state.addTimelineRecord);
 
   const scanHistory = [
     { id: 'h1', exhibitId: 'e1', name: '敦煌飞天壁画', desc: '唐代·莫高窟第320窟', time: '今天 14:30' },
@@ -15,16 +22,31 @@ const ScanPage: React.FC = () => {
     { id: 'h3', exhibitId: 'e5', name: '汝窑天青釉盘', desc: '北宋·汝官窑', time: '昨天 15:45' }
   ];
 
+  const addScanTimeline = (exhibit: typeof exhibits[0]) => {
+    addTimelineRecord({
+      id: `tl_${Date.now()}`,
+      type: 'scan_exhibit',
+      title: '扫码查看展品',
+      description: `通过AR识别查看「${exhibit.name}」`,
+      itemId: exhibit.id,
+      itemType: 'exhibit',
+      timestamp: getNowTimeStr(),
+      icon: '📷'
+    });
+  };
+
   const handleScanCode = () => {
     const mockExhibit = exhibits[Math.floor(Math.random() * exhibits.length)];
     setArExhibit(mockExhibit);
     setShowArOverlay(true);
+    addScanTimeline(mockExhibit);
   };
 
   const handleArScan = () => {
     const mockExhibit = exhibits.find(e => e.arEnabled) || exhibits[0];
     setArExhibit(mockExhibit);
     setShowArOverlay(true);
+    addScanTimeline(mockExhibit);
   };
 
   const handleCloseAr = () => {

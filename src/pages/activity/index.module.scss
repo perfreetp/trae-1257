@@ -145,6 +145,10 @@
     &:active {
       transform: scale(0.99);
     }
+
+    &.full {
+      opacity: 0.6;
+    }
   }
 
   .activityImage {
@@ -269,11 +273,6 @@
     &.disabled {
       background: $color-text-disabled;
       color: $color-text-white;
-    }
-
-    &.full {
-      background: rgba(158, 158, 158, 0.2);
-      color: $color-text-tertiary;
     }
   }
 

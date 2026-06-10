@@ -277,59 +277,189 @@
   }
 }
 
-.recentNotes {
+.recordSection {
   margin-top: 32rpx;
   padding: 0 $page-padding;
 
-  .noteCard {
-    background: $color-bg-card;
+  .tabHeader {
+    display: flex;
+    background: $color-bg-secondary;
     border-radius: $radius-lg;
-    padding: 24rpx;
-    margin-bottom: 16rpx;
-    box-shadow: $shadow-card;
-    transition: all $transition-base;
+    padding: 6rpx;
+    margin-bottom: 24rpx;
 
-    &:active {
-      transform: scale(0.99);
+    .tabItem {
+      flex: 1;
+      height: 72rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      border-radius: $radius-md;
+      transition: all $transition-base;
+
+      &.active {
+        background: $color-bg-card;
+        color: $color-primary;
+        font-weight: $font-weight-semibold;
+        box-shadow: $shadow-card;
+      }
     }
   }
 
-  .noteHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12rpx;
+  .emptyState {
+    padding: 80rpx 40rpx;
+    text-align: center;
+
+    .emptyIcon {
+      display: block;
+      font-size: 80rpx;
+      margin-bottom: 16rpx;
+    }
+
+    .emptyText {
+      display: block;
+      font-size: $font-size-md;
+      color: $color-text-secondary;
+      margin-bottom: 8rpx;
+    }
+
+    .emptyHint {
+      display: block;
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
   }
 
-  .noteTitle {
-    font-size: $font-size-md;
-    font-weight: $font-weight-medium;
-    color: $color-text-primary;
-    @include text-ellipsis;
-    flex: 1;
+  .timelineList {
+    .timelineItem {
+      display: flex;
+      align-items: flex-start;
+      background: $color-bg-card;
+      border-radius: $radius-lg;
+      padding: 24rpx;
+      margin-bottom: 16rpx;
+      box-shadow: $shadow-card;
+      transition: all $transition-base;
+
+      &:active {
+        transform: scale(0.99);
+      }
+    }
+
+    .timelineIcon {
+      width: 72rpx;
+      height: 72rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $radius-md;
+      font-size: 36rpx;
+      margin-right: 20rpx;
+      flex-shrink: 0;
+
+      &.typeRoute { background: #E8F5E9; }
+      &.typeScan { background: #FFF3E0; }
+      &.typeSignup { background: #E3F2FD; }
+      &.typeFeedback { background: #FFF8E1; }
+      &.typeNote { background: #F3E5F5; }
+      &.typeCancel { background: #FFEBEE; }
+      &.typeReschedule { background: #E0F7FA; }
+    }
+
+    .timelineContent {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .timelineHeader {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 8rpx;
+    }
+
+    .timelineTitle {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      flex: 1;
+      @include text-ellipsis;
+    }
+
+    .timelineTime {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      flex-shrink: 0;
+      margin-left: 12rpx;
+    }
+
+    .timelineDesc {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+      line-height: 1.5;
+    }
+
+    .timelineArrow {
+      color: $color-text-tertiary;
+      font-size: $font-size-lg;
+      margin-left: 12rpx;
+      flex-shrink: 0;
+    }
   }
 
-  .noteTime {
-    font-size: $font-size-xs;
-    color: $color-text-tertiary;
-    flex-shrink: 0;
-    margin-left: 16rpx;
-  }
+  .notesList {
+    .noteCard {
+      background: $color-bg-card;
+      border-radius: $radius-lg;
+      padding: 24rpx;
+      margin-bottom: 16rpx;
+      box-shadow: $shadow-card;
+      transition: all $transition-base;
 
-  .noteContent {
-    font-size: $font-size-sm;
-    color: $color-text-secondary;
-    line-height: 1.6;
-    @include text-ellipsis-multi(2);
-  }
+      &:active {
+        transform: scale(0.99);
+      }
+    }
 
-  .noteTag {
-    display: inline-block;
-    padding: 4rpx 12rpx;
-    background: $color-tag-bg;
-    color: $color-tag-text;
-    font-size: $font-size-xs;
-    border-radius: $radius-sm;
-    margin-top: 12rpx;
+    .noteHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12rpx;
+    }
+
+    .noteTitle {
+      font-size: $font-size-md;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      @include text-ellipsis;
+      flex: 1;
+    }
+
+    .noteTime {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      flex-shrink: 0;
+      margin-left: 16rpx;
+    }
+
+    .noteContent {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      line-height: 1.6;
+      @include text-ellipsis-multi(2);
+    }
+
+    .noteTag {
+      display: inline-block;
+      padding: 4rpx 12rpx;
+      background: $color-tag-bg;
+      color: $color-tag-text;
+      font-size: $font-size-xs;
+      border-radius: $radius-sm;
+      margin-top: 12rpx;
+    }
   }
 }

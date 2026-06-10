@@ -37,3 +37,16 @@ export interface FavoriteItem {
   itemImage: string;
   addTime: string;
 }
+
+export type TimelineRecordType = 'route_complete' | 'scan_exhibit' | 'activity_signup' | 'activity_feedback' | 'note_create' | 'activity_cancel' | 'activity_reschedule';
+
+export interface TimelineRecord {
+  id: string;
+  type: TimelineRecordType;
+  title: string;
+  description: string;
+  itemId: string;
+  itemType: 'exhibit' | 'route' | 'activity';
+  timestamp: string;
+  icon: string;
+}

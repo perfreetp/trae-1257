@@ -48,6 +48,10 @@ const ActivityPage: React.FC = () => {
 
   const handleSignUp = (e: React.MouseEvent, activity: Activity) => {
     e.stopPropagation();
+    if (activity.signedUp >= activity.capacity) {
+      Taro.showToast({ title: '活动已报满', icon: 'none' });
+      return;
+    }
     const alreadyReserved = reservations.some(r => r.activityId === activity.id && r.status === 'reserved');
     if (alreadyReserved) {
       Taro.showToast({ title: '您已报名此活动', icon: 'none' });
@@ -226,7 +230,7 @@ const ActivityPage: React.FC = () => {
               {filteredActivities.map(activity => (
                 <View
                   key={activity.id}
-                  className={styles.activityCard}
+                  className={`${styles.activityCard} ${isActivityFull(activity) ? styles.full : ''}`}
                   onClick={() => handleActivityClick(activity)}
                 >
                   <View className={styles.activityImage}>

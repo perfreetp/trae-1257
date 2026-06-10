@@ -18,8 +18,17 @@ const ActivityDetailPage: React.FC = () => {
     return reservations.some(r => r.activityId === activity.id && r.status === 'reserved');
   };
 
+  const isActivityFull = () => {
+    if (!activity) return true;
+    return activity.signedUp >= activity.capacity;
+  };
+
   const handleSignup = () => {
     if (!activity) return;
+    if (isActivityFull()) {
+      Taro.showToast({ title: '活动已报满', icon: 'none' });
+      return;
+    }
     if (checkIfSignedUp() || hasSignedUp) {
       Taro.showToast({ title: '您已报名此活动', icon: 'none' });
       return;
@@ -71,6 +80,7 @@ const ActivityDetailPage: React.FC = () => {
   };
 
   const isSignedUp = checkIfSignedUp() || hasSignedUp;
+  const activityFull = isActivityFull();
 
   return (
     <View className={styles.page}>
@@ -161,10 +171,14 @@ const ActivityDetailPage: React.FC = () => {
           <Text>🔔 提醒</Text>
         </View>
         <View
-          className={`${styles.primaryBtn} ${activity.status === 'ended' ? styles.disabled : ''}`}
-          onClick={activity.status !== 'ended' ? handleSignup : undefined}
+          className={`${styles.primaryBtn} ${(activity.status === 'ended' || activityFull) ? styles.disabled : ''}`}
+          onClick={(activity.status !== 'ended' && !activityFull) ? handleSignup : undefined}
         >
-          <Text>{activity.status === 'ended' ? '已结束' : isSignedUp ? '已报名' : '立即报名'}</Text>
+          <Text>
+            {activity.status === 'ended' ? '已结束' :
+              activityFull ? '已满员' :
+                isSignedUp ? '已报名' : '立即报名'}
+          </Text>
         </View>
       </View>
     </View>
