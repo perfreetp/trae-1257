@@ -1,0 +1,242 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding: $page-padding;
+  padding-bottom: 200rpx;
+}
+
+.posterPreview {
+  background: $color-bg-card;
+  border-radius: $radius-card;
+  overflow: hidden;
+  margin-bottom: 32rpx;
+  box-shadow: $shadow-base;
+}
+
+.posterContent {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  background: linear-gradient(180deg, #F8F5F0 0%, #EFE8DC 50%, #E6D7C0 100%);
+  display: flex;
+  flex-direction: column;
+  padding: 48rpx;
+
+  .posterHeader {
+    text-align: center;
+    margin-bottom: 32rpx;
+
+    .logo {
+      font-size: 48rpx;
+      margin-bottom: 12rpx;
+    }
+
+    .museumName {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $color-primary;
+      letter-spacing: 4rpx;
+    }
+  }
+
+  .posterTitle {
+    text-align: center;
+    font-size: 40rpx;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin-bottom: 16rpx;
+    line-height: 1.4;
+  }
+
+  .posterSubtitle {
+    text-align: center;
+    font-size: $font-size-md;
+    color: $color-text-secondary;
+    margin-bottom: 32rpx;
+  }
+
+  .posterImage {
+    flex: 1;
+    border-radius: $radius-md;
+    overflow: hidden;
+    margin-bottom: 32rpx;
+    border: 4rpx solid #D4AF37;
+    box-shadow: 0 8rpx 32rpx rgba(139, 90, 43, 0.2);
+
+    Image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .posterInfo {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: $radius-md;
+    padding: 24rpx;
+
+    .infoRow {
+      display: flex;
+      justify-content: space-between;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      margin-bottom: 12rpx;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .label {
+        color: $color-text-tertiary;
+      }
+
+      .value {
+        color: $color-text-primary;
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+
+  .posterFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32rpx;
+
+    .qrcode {
+      width: 100rpx;
+      height: 100rpx;
+      background: $color-bg-card;
+      border-radius: $radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48rpx;
+    }
+
+    .footerText {
+      flex: 1;
+      margin-left: 20rpx;
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      line-height: 1.6;
+    }
+
+    .stamp {
+      width: 80rpx;
+      height: 80rpx;
+      border: 2rpx solid $color-primary;
+      border-radius: $radius-round;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(-15deg);
+      opacity: 0.8;
+
+      .stampText {
+        font-size: 20rpx;
+        color: $color-primary;
+        font-weight: $font-weight-bold;
+      }
+    }
+  }
+}
+
+.templateSelector {
+  background: $color-bg-card;
+  border-radius: $radius-card;
+  padding: 24rpx;
+  margin-bottom: 32rpx;
+
+  .selectorTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 20rpx;
+
+    .accent {
+      color: $color-primary;
+      margin-right: 8rpx;
+    }
+  }
+
+  .templateList {
+    display: flex;
+    gap: 20rpx;
+  }
+
+  .templateItem {
+    flex: 1;
+    height: 120rpx;
+    border-radius: $radius-md;
+    border: 2rpx solid $color-border;
+    transition: all $transition-base;
+
+    &.active {
+      border-color: $color-primary;
+      border-width: 4rpx;
+    }
+
+    &:nth-child(1) {
+      background: linear-gradient(180deg, #F8F5F0 0%, #EFE8DC 100%);
+    }
+
+    &:nth-child(2) {
+      background: linear-gradient(180deg, #1A1A2E 0%, #16213E 100%);
+    }
+
+    &:nth-child(3) {
+      background: linear-gradient(180deg, #FFECD2 0%, #FCB69F 100%);
+    }
+
+    &:nth-child(4) {
+      background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 100%);
+    }
+  }
+}
+
+.bottomActions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: 16rpx $page-padding;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 20rpx;
+  box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+
+  .actionBtn {
+    flex: 1;
+    height: 80rpx;
+    border-radius: $radius-button;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .icon {
+      margin-right: 8rpx;
+    }
+
+    &.secondary {
+      background: $color-bg-secondary;
+      color: $color-text-secondary;
+    }
+
+    &.primary {
+      background: $color-primary;
+      color: $color-text-white;
+    }
+  }
+}

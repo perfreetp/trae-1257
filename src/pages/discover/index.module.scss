@@ -1,0 +1,295 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  position: relative;
+  padding: 40rpx $page-padding 32rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: 0 0 40rpx 40rpx;
+
+  .welcome {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    margin-bottom: 8rpx;
+  }
+
+  .subTitle {
+    font-size: $font-size-sm;
+    opacity: 0.85;
+    margin-bottom: 32rpx;
+  }
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: $radius-button;
+  padding: 0 32rpx;
+  height: 80rpx;
+
+  .searchIcon {
+    font-size: $font-size-lg;
+    margin-right: 16rpx;
+    opacity: 0.8;
+  }
+
+  .searchText {
+    font-size: $font-size-md;
+    opacity: 0.75;
+  }
+}
+
+.quickEntry {
+  margin: -24rpx $page-padding 0;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: 32rpx 16rpx;
+  box-shadow: $shadow-card;
+  position: relative;
+  z-index: 10;
+
+  .entryGrid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .entryItem {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16rpx 0;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.8;
+      transform: scale(0.96);
+    }
+  }
+
+  .entryIcon {
+    width: 88rpx;
+    height: 88rpx;
+    border-radius: $radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    margin-bottom: 12rpx;
+
+    &.iconCloud {
+      background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+      color: $color-success;
+    }
+
+    &.iconChild {
+      background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+      color: $color-warning;
+    }
+
+    &.iconAr {
+      background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+      color: $color-info;
+    }
+
+    &.iconCheckin {
+      background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD9 100%);
+      color: $color-error;
+    }
+
+    &.iconRoute {
+      background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+      color: #7B1FA2;
+    }
+
+    &.iconActivity {
+      background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+      color: #F9A825;
+    }
+  }
+
+  .entryLabel {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+}
+
+.section {
+  margin-top: 40rpx;
+  padding: 0 $page-padding;
+
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24rpx;
+  }
+
+  .sectionTitle {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+
+    .accent {
+      color: $color-primary;
+    }
+  }
+
+  .sectionMore {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+    display: flex;
+    align-items: center;
+
+    .arrow {
+      margin-left: 4rpx;
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+.cloudList {
+  @include scroll-x-container;
+  margin: 0 -$page-padding;
+  padding: 0 $page-padding;
+
+  .cloudCard {
+    @include scroll-x-item(280rpx);
+    margin-right: 24rpx;
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-card;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .cloudImage {
+    width: 100%;
+    height: 200rpx;
+
+    Image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .cloudInfo {
+    padding: 20rpx;
+
+    .cloudName {
+      font-size: $font-size-md;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      margin-bottom: 8rpx;
+      @include text-ellipsis;
+    }
+
+    .cloudDesc {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      @include text-ellipsis;
+    }
+  }
+}
+
+.exhibitionList {
+  .exhibitionCard {
+    display: flex;
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    margin-bottom: 24rpx;
+    box-shadow: $shadow-card;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.99);
+    }
+  }
+
+  .exhibitionImage {
+    width: 220rpx;
+    height: 220rpx;
+    flex-shrink: 0;
+
+    Image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .exhibitionInfo {
+    flex: 1;
+    padding: 24rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .exhibitionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    @include text-ellipsis;
+    margin-bottom: 8rpx;
+  }
+
+  .exhibitionSubtitle {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    @include text-ellipsis;
+    margin-bottom: 16rpx;
+  }
+
+  .exhibitionMeta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8rpx 16rpx;
+
+    .metaItem {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      display: flex;
+      align-items: center;
+
+      .icon {
+        margin-right: 6rpx;
+        font-size: $font-size-xs;
+      }
+    }
+
+    .tag {
+      padding: 4rpx 12rpx;
+      background: $color-tag-bg;
+      color: $color-tag-text;
+      font-size: $font-size-xs;
+      border-radius: $radius-sm;
+    }
+
+    .tagHot {
+      background: rgba(230, 81, 0, 0.1);
+      color: $color-warning;
+    }
+
+    .tagNew {
+      background: rgba(46, 125, 50, 0.1);
+      color: $color-success;
+    }
+  }
+}

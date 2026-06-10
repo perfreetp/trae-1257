@@ -1,0 +1,195 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.coverImage {
+  width: 100%;
+  height: 400rpx;
+
+  Image {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.exhibitionInfo {
+  background: $color-bg-card;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+
+  .title {
+    font-size: 36rpx;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin-bottom: 12rpx;
+  }
+
+  .subtitle {
+    font-size: $font-size-md;
+    color: $color-primary;
+    margin-bottom: 20rpx;
+  }
+
+  .metaRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16rpx 32rpx;
+
+    .metaItem {
+      display: flex;
+      align-items: center;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+
+      .icon {
+        margin-right: 8rpx;
+        font-size: $font-size-md;
+      }
+    }
+  }
+}
+
+.section {
+  background: $color-bg-card;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 20rpx;
+
+    .accent {
+      color: $color-primary;
+      margin-right: 8rpx;
+    }
+  }
+
+  .description {
+    font-size: $font-size-md;
+    color: $color-text-secondary;
+    line-height: 1.8;
+  }
+}
+
+.exhibitList {
+  .exhibitItem {
+    display: flex;
+    padding: 20rpx 0;
+    border-bottom: 1rpx solid $color-divider;
+    transition: all $transition-base;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:active {
+      background: $color-bg-hover;
+      margin: 0 -32rpx;
+      padding-left: 32rpx;
+      padding-right: 32rpx;
+    }
+  }
+
+  .exhibitImage {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: $radius-md;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-right: 20rpx;
+
+    Image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .exhibitInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .name {
+      font-size: $font-size-md;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      @include text-ellipsis;
+      margin-bottom: 8rpx;
+    }
+
+    .desc {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      @include text-ellipsis;
+    }
+  }
+
+  .exhibitArrow {
+    display: flex;
+    align-items: center;
+    color: $color-text-tertiary;
+    font-size: $font-size-lg;
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: 16rpx $page-padding;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+
+  .actionItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .icon {
+      font-size: 36rpx;
+      margin-bottom: 4rpx;
+    }
+
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .primaryBtn {
+    flex: 1;
+    height: 80rpx;
+    background: $color-primary;
+    color: $color-text-white;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    border-radius: $radius-button;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+
+    .icon {
+      margin-right: 8rpx;
+    }
+  }
+}

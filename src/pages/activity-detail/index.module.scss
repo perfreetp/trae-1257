@@ -1,0 +1,226 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.coverImage {
+  width: 100%;
+  height: 360rpx;
+
+  Image {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.activityInfo {
+  background: $color-bg-card;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+  position: relative;
+
+  .statusBadge {
+    position: absolute;
+    top: 32rpx;
+    right: 32rpx;
+    padding: 8rpx 20rpx;
+    border-radius: $radius-round;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+
+    &.ongoing {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+
+    &.upcoming {
+      background: #E3F2FD;
+      color: #1565C0;
+    }
+
+    &.ended {
+      background: #FAFAFA;
+      color: #9E9E9E;
+    }
+  }
+
+  .title {
+    font-size: 36rpx;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin-bottom: 12rpx;
+    padding-right: 120rpx;
+  }
+
+  .category {
+    display: inline-block;
+    padding: 6rpx 16rpx;
+    background: $color-primary-light;
+    color: $color-primary;
+    font-size: $font-size-xs;
+    border-radius: $radius-sm;
+    margin-bottom: 20rpx;
+  }
+
+  .metaList {
+    .metaItem {
+      display: flex;
+      align-items: center;
+      padding: 12rpx 0;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+
+      .icon {
+        width: 40rpx;
+        font-size: $font-size-md;
+        margin-right: 12rpx;
+      }
+    }
+  }
+}
+
+.section {
+  background: $color-bg-card;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 20rpx;
+
+    .accent {
+      color: $color-primary;
+      margin-right: 8rpx;
+    }
+  }
+
+  .sectionContent {
+    font-size: $font-size-md;
+    color: $color-text-secondary;
+    line-height: 1.8;
+  }
+}
+
+.guestSection {
+  .guestCard {
+    display: flex;
+    align-items: center;
+
+    .avatar {
+      width: 96rpx;
+      height: 96rpx;
+      border-radius: $radius-round;
+      background: $color-bg-secondary;
+      overflow: hidden;
+      margin-right: 20rpx;
+      flex-shrink: 0;
+
+      Image {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .guestInfo {
+      flex: 1;
+      min-width: 0;
+
+      .name {
+        font-size: $font-size-md;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+        margin-bottom: 8rpx;
+      }
+
+      .title {
+        font-size: $font-size-sm;
+        color: $color-text-tertiary;
+      }
+
+      .bio {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+        margin-top: 8rpx;
+        line-height: 1.6;
+      }
+    }
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: 16rpx $page-padding;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+
+  .priceInfo {
+    flex: 1;
+
+    .price {
+      font-size: 32rpx;
+      font-weight: $font-weight-bold;
+      color: #E53935;
+    }
+
+    .priceLabel {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .secondaryBtn {
+    padding: 0 32rpx;
+    height: 80rpx;
+    background: $color-bg-secondary;
+    color: $color-primary;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    border-radius: $radius-button;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+  }
+
+  .primaryBtn {
+    padding: 0 48rpx;
+    height: 80rpx;
+    background: $color-primary;
+    color: $color-text-white;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    border-radius: $radius-button;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+
+    &.disabled {
+      background: $color-border;
+      color: $color-text-tertiary;
+    }
+  }
+}

@@ -1,0 +1,415 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.tabs {
+  display: flex;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  gap: 24rpx;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: $shadow-float;
+
+  .tabItem {
+    flex: 1;
+    height: 72rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-button;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    transition: all $transition-base;
+
+    &.active {
+      background: $color-primary;
+      color: $color-text-white;
+      font-weight: $font-weight-medium;
+    }
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+}
+
+.categorySection {
+  padding: $spacing-lg $page-padding $spacing-md;
+
+  .categoryScroll {
+    @include scroll-x-container;
+    margin: 0 -$page-padding;
+    padding: 0 $page-padding;
+
+    .categoryItem {
+      @include scroll-x-item(140rpx);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 24rpx;
+      transition: all $transition-base;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &:active {
+        opacity: 0.8;
+      }
+    }
+
+    .categoryIcon {
+      width: 88rpx;
+      height: 88rpx;
+      border-radius: $radius-lg;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36rpx;
+      margin-bottom: 12rpx;
+
+      &.lecture {
+        background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+      }
+
+      &.workshop {
+        background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+      }
+
+      &.tour {
+        background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+      }
+
+      &.performance {
+        background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+      }
+    }
+
+    .categoryLabel {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+    }
+  }
+}
+
+.section {
+  margin-top: 16rpx;
+  padding: 0 $page-padding;
+
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20rpx;
+  }
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+
+    .accent {
+      color: $color-primary;
+    }
+  }
+
+  .sectionMore {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+    display: flex;
+    align-items: center;
+
+    .arrow {
+      margin-left: 4rpx;
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+.activityList {
+  .activityCard {
+    display: flex;
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    margin-bottom: 24rpx;
+    box-shadow: $shadow-card;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.99);
+    }
+  }
+
+  .activityImage {
+    width: 240rpx;
+    height: 240rpx;
+    flex-shrink: 0;
+    position: relative;
+
+    Image {
+      width: 100%;
+      height: 100%;
+    }
+
+    .statusBadge {
+      position: absolute;
+      top: 12rpx;
+      left: 12rpx;
+      padding: 4rpx 12rpx;
+      border-radius: $radius-sm;
+      font-size: $font-size-xs;
+      color: $color-text-white;
+
+      &.upcoming {
+        background: rgba(21, 101, 192, 0.9);
+      }
+
+      &.ongoing {
+        background: rgba(46, 125, 50, 0.9);
+      }
+
+      &.ended {
+        background: rgba(158, 158, 158, 0.9);
+      }
+    }
+  }
+
+  .activityInfo {
+    flex: 1;
+    padding: 20rpx 24rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+  }
+
+  .activityTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    @include text-ellipsis;
+    margin-bottom: 8rpx;
+  }
+
+  .activitySubtitle {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    @include text-ellipsis;
+    margin-bottom: 16rpx;
+  }
+
+  .activityMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 8rpx;
+
+    .metaItem {
+      display: flex;
+      align-items: center;
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+
+      .icon {
+        margin-right: 6rpx;
+        font-size: $font-size-xs;
+      }
+    }
+  }
+
+  .activityFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16rpx;
+  }
+
+  .priceInfo {
+    display: flex;
+    align-items: baseline;
+    gap: 8rpx;
+
+    .price {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $color-primary;
+    }
+
+    .free {
+      color: $color-success;
+    }
+
+    .unit {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .signUpBtn {
+    @include button-reset;
+    padding: 8rpx 24rpx;
+    height: 56rpx;
+    background: $color-primary;
+    color: $color-text-white;
+    font-size: $font-size-sm;
+    border-radius: $radius-button;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+
+    &.disabled {
+      background: $color-text-disabled;
+      color: $color-text-white;
+    }
+
+    &.full {
+      background: rgba(158, 158, 158, 0.2);
+      color: $color-text-tertiary;
+    }
+  }
+
+  .capacityInfo {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    text-align: right;
+  }
+}
+
+.reservationCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: $shadow-card;
+
+  .reservationHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16rpx;
+    padding-bottom: 16rpx;
+    border-bottom: 1rpx solid $color-divider;
+  }
+
+  .reservationTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    @include text-ellipsis;
+    flex: 1;
+  }
+
+  .reservationStatus {
+    padding: 4rpx 12rpx;
+    border-radius: $radius-sm;
+    font-size: $font-size-xs;
+    flex-shrink: 0;
+    margin-left: 16rpx;
+
+    &.reserved {
+      background: rgba(21, 101, 192, 0.1);
+      color: $color-info;
+    }
+
+    &.completed {
+      background: rgba(158, 158, 158, 0.15);
+      color: $color-text-tertiary;
+    }
+
+    &.cancelled {
+      background: rgba(198, 40, 40, 0.1);
+      color: $color-error;
+    }
+  }
+
+  .reservationInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 10rpx;
+    margin-bottom: 20rpx;
+
+    .infoRow {
+      display: flex;
+      align-items: center;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+
+      .icon {
+        margin-right: 8rpx;
+        font-size: $font-size-sm;
+      }
+    }
+  }
+
+  .reservationActions {
+    display: flex;
+    gap: 16rpx;
+
+    .actionBtn {
+      @include button-reset;
+      flex: 1;
+      height: 64rpx;
+      border-radius: $radius-button;
+      font-size: $font-size-sm;
+      transition: all $transition-base;
+
+      &:active {
+        opacity: 0.9;
+        transform: scale(0.98);
+      }
+
+      &.primary {
+        background: $color-primary;
+        color: $color-text-white;
+      }
+
+      &.secondary {
+        background: $color-bg-secondary;
+        color: $color-text-secondary;
+      }
+    }
+  }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 0;
+
+  .emptyIcon {
+    font-size: 120rpx;
+    margin-bottom: 24rpx;
+    opacity: 0.5;
+  }
+
+  .emptyText {
+    font-size: $font-size-md;
+    color: $color-text-tertiary;
+    margin-bottom: 16rpx;
+  }
+
+  .emptyBtn {
+    @include button-reset;
+    padding: 12rpx 40rpx;
+    height: 72rpx;
+    background: $color-primary;
+    color: $color-text-white;
+    font-size: $font-size-sm;
+    border-radius: $radius-button;
+
+    &:active {
+      opacity: 0.9;
+    }
+  }
+}

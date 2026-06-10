@@ -1,0 +1,252 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 160rpx;
+}
+
+.routeHeader {
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+  padding: 40rpx $page-padding;
+  color: $color-text-white;
+
+  .routeName {
+    font-size: 36rpx;
+    font-weight: $font-weight-bold;
+    margin-bottom: 12rpx;
+  }
+
+  .routeDesc {
+    font-size: $font-size-sm;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin-bottom: 24rpx;
+  }
+
+  .routeStats {
+    display: flex;
+    gap: 32rpx;
+
+    .statItem {
+      display: flex;
+      align-items: center;
+      font-size: $font-size-sm;
+
+      .icon {
+        margin-right: 8rpx;
+      }
+    }
+  }
+}
+
+.section {
+  background: $color-bg-card;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: 24rpx;
+
+    .accent {
+      color: $color-primary;
+      margin-right: 8rpx;
+    }
+  }
+}
+
+.timeline {
+  position: relative;
+  padding-left: 40rpx;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 8rpx;
+    top: 10rpx;
+    bottom: 10rpx;
+    width: 4rpx;
+    background: $color-border;
+    border-radius: 2rpx;
+  }
+
+  .timelineItem {
+    position: relative;
+    padding-bottom: 32rpx;
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -36rpx;
+      top: 8rpx;
+      width: 20rpx;
+      height: 20rpx;
+      background: $color-primary;
+      border-radius: $radius-round;
+      border: 4rpx solid $color-bg-card;
+    }
+  }
+
+  .stopNumber {
+    position: absolute;
+    left: -40rpx;
+    top: 0;
+    width: 32rpx;
+    height: 32rpx;
+    background: $color-primary;
+    color: $color-text-white;
+    font-size: $font-size-xs;
+    border-radius: $radius-round;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: $font-weight-semibold;
+    z-index: 1;
+  }
+
+  .stopContent {
+    background: $color-bg-secondary;
+    border-radius: $radius-md;
+    padding: 20rpx;
+
+    .stopName {
+      font-size: $font-size-md;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      margin-bottom: 8rpx;
+    }
+
+    .stopInfo {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      margin-bottom: 12rpx;
+    }
+
+    .stopActions {
+      display: flex;
+      gap: 16rpx;
+
+      .actionBtn {
+        padding: 8rpx 16rpx;
+        background: $color-bg-card;
+        border-radius: $radius-sm;
+        font-size: $font-size-xs;
+        color: $color-text-secondary;
+      }
+    }
+  }
+}
+
+.tipSection {
+  background: #FFF3E0;
+  padding: 24rpx 32rpx;
+  margin: 0 $page-padding 16rpx;
+  border-radius: $radius-md;
+
+  .tipHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12rpx;
+
+    .icon {
+      margin-right: 8rpx;
+      font-size: $font-size-lg;
+    }
+
+    .tipTitle {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: #E65100;
+    }
+  }
+
+  .tipText {
+    font-size: $font-size-sm;
+    color: #5D4037;
+    line-height: 1.6;
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: 16rpx $page-padding;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+
+  .actionItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .icon {
+      font-size: 36rpx;
+      margin-bottom: 4rpx;
+    }
+
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .primaryBtn {
+    flex: 1;
+    height: 80rpx;
+    background: $color-primary;
+    color: $color-text-white;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    border-radius: $radius-button;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+
+    .icon {
+      margin-right: 8rpx;
+    }
+  }
+
+  .secondaryBtn {
+    flex: 1;
+    height: 80rpx;
+    background: $color-bg-secondary;
+    color: $color-primary;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    border-radius: $radius-button;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+
+    .icon {
+      margin-right: 8rpx;
+    }
+  }
+}

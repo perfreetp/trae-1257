@@ -1,0 +1,335 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.profileHeader {
+  position: relative;
+  padding: 60rpx $page-padding 80rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: 0 0 40rpx 40rpx;
+
+  .profileTop {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32rpx;
+  }
+
+  .avatar {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: $radius-round;
+    border: 4rpx solid rgba(255, 255, 255, 0.3);
+    margin-right: 24rpx;
+    flex-shrink: 0;
+
+    Image {
+      width: 100%;
+      height: 100%;
+      border-radius: $radius-round;
+    }
+  }
+
+  .userInfo {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .nickname {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    margin-bottom: 8rpx;
+    @include text-ellipsis;
+  }
+
+  .levelInfo {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+
+    .levelBadge {
+      padding: 4rpx 12rpx;
+      background: rgba(212, 175, 55, 0.9);
+      color: $color-text-white;
+      font-size: $font-size-xs;
+      border-radius: $radius-sm;
+      font-weight: $font-weight-medium;
+    }
+
+    .points {
+      font-size: $font-size-sm;
+      opacity: 0.9;
+    }
+  }
+}
+
+.statsRow {
+  display: flex;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-lg;
+  padding: 24rpx 0;
+
+  .statItem {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1rpx solid rgba(255, 255, 255, 0.2);
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  .statNumber {
+    font-size: 40rpx;
+    font-weight: $font-weight-bold;
+    margin-bottom: 8rpx;
+  }
+
+  .statLabel {
+    font-size: $font-size-xs;
+    opacity: 0.85;
+  }
+}
+
+.menuSection {
+  margin: -40rpx $page-padding 0;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+
+  .menuTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    padding: 24rpx 24rpx 16rpx;
+    border-bottom: 1rpx solid $color-divider;
+  }
+
+  .menuList {
+    .menuItem {
+      display: flex;
+      align-items: center;
+      padding: 28rpx 24rpx;
+      border-bottom: 1rpx solid $color-divider;
+      transition: all $transition-base;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:active {
+        background: $color-bg-hover;
+      }
+    }
+
+    .menuIcon {
+      width: 64rpx;
+      height: 64rpx;
+      border-radius: $radius-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28rpx;
+      margin-right: 20rpx;
+
+      &.iconCheckin {
+        background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+      }
+
+      &.iconNote {
+        background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+      }
+
+      &.iconFavorite {
+        background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD9 100%);
+      }
+
+      &.iconShare {
+        background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+      }
+
+      &.iconFeedback {
+        background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+      }
+
+      &.iconSetting {
+        background: linear-gradient(135deg, #ECEFF1 0%, #CFD8DC 100%);
+      }
+    }
+
+    .menuText {
+      flex: 1;
+      font-size: $font-size-md;
+      color: $color-text-primary;
+    }
+
+    .menuArrow {
+      font-size: $font-size-lg;
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.stampSection {
+  margin-top: 32rpx;
+  padding: 0 $page-padding;
+
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20rpx;
+  }
+
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+
+    .accent {
+      color: $color-primary;
+    }
+  }
+
+  .sectionMore {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+    display: flex;
+    align-items: center;
+
+    .arrow {
+      margin-left: 4rpx;
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+.stampGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: 24rpx;
+  box-shadow: $shadow-card;
+
+  .stampItem {
+    width: calc((100% - 48rpx) / 4);
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-md;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &.collected {
+      background: $color-bg-secondary;
+    }
+
+    &.locked {
+      background: $color-bg-secondary;
+      opacity: 0.5;
+    }
+  }
+
+  .stampImage {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: $radius-round;
+    margin-bottom: 8rpx;
+
+    Image {
+      width: 100%;
+      height: 100%;
+      border-radius: $radius-round;
+    }
+
+    &.locked {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.05);
+      font-size: 32rpx;
+    }
+  }
+
+  .stampName {
+    font-size: 20rpx;
+    color: $color-text-secondary;
+    text-align: center;
+    @include text-ellipsis;
+    width: 100%;
+    padding: 0 4rpx;
+  }
+}
+
+.recentNotes {
+  margin-top: 32rpx;
+  padding: 0 $page-padding;
+
+  .noteCard {
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: 24rpx;
+    margin-bottom: 16rpx;
+    box-shadow: $shadow-card;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.99);
+    }
+  }
+
+  .noteHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12rpx;
+  }
+
+  .noteTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    @include text-ellipsis;
+    flex: 1;
+  }
+
+  .noteTime {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    flex-shrink: 0;
+    margin-left: 16rpx;
+  }
+
+  .noteContent {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    line-height: 1.6;
+    @include text-ellipsis-multi(2);
+  }
+
+  .noteTag {
+    display: inline-block;
+    padding: 4rpx 12rpx;
+    background: $color-tag-bg;
+    color: $color-tag-text;
+    font-size: $font-size-xs;
+    border-radius: $radius-sm;
+    margin-top: 12rpx;
+  }
+}
