@@ -534,3 +534,150 @@
     }
   }
 }
+
+.ticketCard {
+  display: flex;
+  padding: 0 !important;
+  overflow: hidden;
+  position: relative;
+  background: $color-bg-card;
+
+  .ticketStub {
+    width: 120rpx;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, $color-primary, #6B4423);
+    color: $color-text-white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20rpx 12rpx;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: -10rpx;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20rpx;
+      height: 20rpx;
+      background: $color-bg-page;
+      border-radius: 50%;
+    }
+  }
+
+  .ticketStubTitle {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    writing-mode: vertical-rl;
+    letter-spacing: 4rpx;
+    margin-bottom: 12rpx;
+  }
+
+  .ticketStubId {
+    font-size: 20rpx;
+    opacity: 0.8;
+    writing-mode: vertical-rl;
+  }
+
+  .ticketMain {
+    flex: 1;
+    padding: 20rpx 24rpx;
+    position: relative;
+    background: $color-bg-card;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -10rpx;
+      top: 20rpx;
+      width: 20rpx;
+      height: 20rpx;
+      background: $color-bg-page;
+      border-radius: 50%;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: -10rpx;
+      bottom: 20rpx;
+      width: 20rpx;
+      height: 20rpx;
+      background: $color-bg-page;
+      border-radius: 50%;
+    }
+  }
+
+  .ticketHeader {
+    margin-bottom: 12rpx;
+    padding-bottom: 12rpx;
+    border-bottom: 1rpx dashed $color-border;
+  }
+
+  .ticketTitleRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8rpx;
+  }
+
+  .rescheduleHint {
+    display: flex;
+    align-items: center;
+    gap: 6rpx;
+
+    .rescheduleIcon {
+      font-size: $font-size-xs;
+    }
+
+    .rescheduleText {
+      font-size: $font-size-xs;
+      color: $color-gold;
+    }
+  }
+
+  .dateInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4rpx;
+  }
+
+  .currentDate {
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+    font-weight: $font-weight-medium;
+  }
+
+  .oldDate {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    text-decoration: line-through;
+  }
+
+  .feedbackInfo {
+    font-size: $font-size-xs;
+    color: #2E7D32;
+  }
+
+  &.cancelledTicket {
+    opacity: 0.7;
+
+    .ticketStub {
+      background: linear-gradient(180deg, $color-text-disabled, #888);
+    }
+
+    .reservationTitle {
+      text-decoration: line-through;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .actionBtn {
+    &.cancelled {
+      background: rgba(198, 40, 40, 0.1);
+      color: $color-error;
+    }
+  }
+}

@@ -287,57 +287,96 @@ const ActivityPage: React.FC = () => {
           </View>
           {reservations.length > 0 ? (
             reservations.map(reservation => (
-              <View key={reservation.id} className={styles.reservationCard}>
-                <View className={styles.reservationHeader}>
-                  <Text className={styles.reservationTitle}>{reservation.activityTitle}</Text>
-                  <View className={`${styles.reservationStatus} ${styles[getReservationStatusClass(reservation.status, !!reservation.feedback)]}`}>
-                    {getReservationStatusLabel(reservation.status, !!reservation.feedback)}
-                  </View>
+              <View
+                key={reservation.id}
+                className={`${styles.reservationCard} ${styles.ticketCard} ${reservation.status === 'cancelled' ? styles.cancelledTicket : ''}`}
+              >
+                <View className={styles.ticketStub}>
+                  <Text className={styles.ticketStubTitle}>数字文化馆</Text>
+                  <Text className={styles.ticketStubId}>ID: {reservation.id.slice(-6)}</Text>
                 </View>
-                <View className={styles.reservationInfo}>
-                  <View className={styles.infoRow}>
-                    <Text className={styles.icon}>📅</Text>
-                    <Text>{reservation.date} {reservation.time}</Text>
-                  </View>
-                  <View className={styles.infoRow}>
-                    <Text className={styles.icon}>🎫</Text>
-                    <Text>{reservation.ticketCount} 张票</Text>
-                  </View>
-                  <View className={styles.infoRow}>
-                    <Text className={styles.icon}>⏰</Text>
-                    <Text>预约时间：{reservation.reservationTime}</Text>
-                  </View>
-                </View>
-                <View className={styles.reservationActions}>
-                  {reservation.status === 'reserved' && (
-                    <>
-                      <View
-                        className={`${styles.actionBtn} ${styles.secondary}`}
-                        onClick={() => handleCancel(reservation)}
-                      >
-                        取消预约
+                <View className={styles.ticketMain}>
+                  <View className={styles.ticketHeader}>
+                    <View className={styles.ticketTitleRow}>
+                      <Text className={styles.reservationTitle}>{reservation.activityTitle}</Text>
+                      <View className={`${styles.reservationStatus} ${styles[getReservationStatusClass(reservation.status, !!reservation.feedback)]}`}>
+                        {getReservationStatusLabel(reservation.status, !!reservation.feedback)}
                       </View>
+                    </View>
+                    {reservation.rescheduleHistory && reservation.rescheduleHistory.length > 0 && (
+                      <View className={styles.rescheduleHint}>
+                        <Text className={styles.rescheduleIcon}>📅</Text>
+                        <Text className={styles.rescheduleText}>
+                          已改签 {reservation.rescheduleHistory.length} 次
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <View className={styles.reservationInfo}>
+                    <View className={styles.infoRow}>
+                      <Text className={styles.icon}>📅</Text>
+                      <View className={styles.dateInfo}>
+                        <Text className={styles.currentDate}>{reservation.date} {reservation.time}</Text>
+                        {reservation.rescheduleHistory && reservation.rescheduleHistory.length > 0 && (
+                          <Text className={styles.oldDate}>
+                            原：{reservation.rescheduleHistory[reservation.rescheduleHistory.length - 1].oldDate} {reservation.rescheduleHistory[reservation.rescheduleHistory.length - 1].oldTime}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                    <View className={styles.infoRow}>
+                      <Text className={styles.icon}>🎫</Text>
+                      <Text>{reservation.ticketCount} 张票</Text>
+                    </View>
+                    <View className={styles.infoRow}>
+                      <Text className={styles.icon}>⏰</Text>
+                      <Text>预约时间：{reservation.reservationTime}</Text>
+                    </View>
+                    {reservation.feedback && (
+                      <View className={styles.infoRow}>
+                        <Text className={styles.icon}>⭐</Text>
+                        <Text className={styles.feedbackInfo}>
+                          评分 {reservation.feedback.rating} 分 · {reservation.feedback.comment.slice(0, 20)}{reservation.feedback.comment.length > 20 ? '...' : ''}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <View className={styles.reservationActions}>
+                    {reservation.status === 'reserved' && (
+                      <>
+                        <View
+                          className={`${styles.actionBtn} ${styles.secondary}`}
+                          onClick={() => handleCancel(reservation)}
+                        >
+                          取消预约
+                        </View>
+                        <View
+                          className={`${styles.actionBtn} ${styles.primary}`}
+                          onClick={() => handleReschedule(reservation)}
+                        >
+                          预约改签
+                        </View>
+                      </>
+                    )}
+                    {reservation.status === 'cancelled' && (
+                      <View className={`${styles.actionBtn} ${styles.cancelled}`}>
+                        已取消
+                      </View>
+                    )}
+                    {reservation.status === 'completed' && !reservation.feedback && (
                       <View
                         className={`${styles.actionBtn} ${styles.primary}`}
-                        onClick={() => handleReschedule(reservation)}
+                        onClick={() => handleFeedback(reservation)}
                       >
-                        预约改签
+                        满意度反馈
                       </View>
-                    </>
-                  )}
-                  {reservation.status === 'completed' && !reservation.feedback && (
-                    <View
-                      className={`${styles.actionBtn} ${styles.primary}`}
-                      onClick={() => handleFeedback(reservation)}
-                    >
-                      满意度反馈
-                    </View>
-                  )}
-                  {reservation.status === 'completed' && reservation.feedback && (
-                    <View className={`${styles.actionBtn} ${styles.feedbackDone}`}>
-                      已反馈 ⭐{reservation.feedback.rating}
-                    </View>
-                  )}
+                    )}
+                    {reservation.status === 'completed' && reservation.feedback && (
+                      <View className={`${styles.actionBtn} ${styles.feedbackDone}`}>
+                        已反馈 ⭐{reservation.feedback.rating}
+                      </View>
+                    )}
+                  </View>
                 </View>
               </View>
             ))

@@ -10,7 +10,8 @@ export default defineAppConfig({
     'pages/route-detail/index',
     'pages/activity-detail/index',
     'pages/checkin/index',
-    'pages/share-poster/index'
+    'pages/share-poster/index',
+    'pages/visit-summary/index'
   ],
   window: {
     backgroundTextStyle: 'light',

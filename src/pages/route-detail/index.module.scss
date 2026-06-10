@@ -195,6 +195,26 @@
   box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.06);
   z-index: 100;
 
+  .continueTip {
+    position: absolute;
+    top: -40rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    padding: 8rpx 24rpx;
+    background: rgba(139, 90, 43, 0.9);
+    color: $color-text-white;
+    font-size: $font-size-xs;
+    border-radius: 20rpx;
+    white-space: nowrap;
+
+    .continueTipIcon {
+      font-size: $font-size-sm;
+    }
+  }
+
   .actionItem {
     display: flex;
     flex-direction: column;
@@ -231,6 +251,10 @@
 
     .icon {
       margin-right: 8rpx;
+    }
+
+    &.continueBtn {
+      background: linear-gradient(135deg, $color-gold, $color-primary);
     }
   }
 

@@ -134,19 +134,34 @@ export const useAppStore = create<AppState>((set, get) => {
     rescheduleReservation: (id, newDate, newTime) => {
       set((state) => {
         const reservation = state.reservations.find(r => r.id === id);
+        if (!reservation) return state;
+        const oldDate = reservation.date;
+        const oldTime = reservation.time;
+        const historyRecord = {
+          oldDate,
+          oldTime,
+          newDate,
+          newTime,
+          time: getNowTimeStr()
+        };
         const newReservations = state.reservations.map((r) =>
-          r.id === id ? { ...r, date: newDate, time: newTime } : r
+          r.id === id ? {
+            ...r,
+            date: newDate,
+            time: newTime,
+            rescheduleHistory: [...(r.rescheduleHistory || []), historyRecord]
+          } : r
         );
-        const newTimeline = reservation ? [{
+        const newTimeline = [{
           id: `tl_${Date.now()}`,
           type: 'activity_reschedule',
           title: `预约改签成功`,
-          description: `「${reservation.activityTitle}」改期至 ${newDate} ${newTime}`,
+          description: `「${reservation.activityTitle}」从 ${oldDate} ${oldTime} 改至 ${newDate} ${newTime}`,
           itemId: reservation.activityId,
           itemType: 'activity',
           timestamp: getNowTimeStr(),
           icon: '📅'
-        }, ...state.timeline] : state.timeline;
+        }, ...state.timeline];
         persist({ reservations: newReservations, timeline: newTimeline });
         return { reservations: newReservations, timeline: newTimeline };
       });

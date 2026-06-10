@@ -99,38 +99,87 @@ const RouteDetailPage: React.FC = () => {
 
   const handleNextStop = () => {
     if (!currentRecordId || !route) return;
+    const currentStop = route.stops[currentStopIndex];
+    if (currentStop && currentStop.exhibitId && !completedStops.includes(currentStop.id + '_visited')) {
+      Taro.showModal({
+        title: '还没听讲解哦',
+        content: `您还未查看「${currentStop.name}」的展品讲解，确定要前往下一站吗？`,
+        confirmText: '继续前进',
+        cancelText: '回去看看',
+        success: (res) => {
+          if (res.confirm) {
+            doNextStop();
+          }
+        }
+      });
+    } else {
+      doNextStop();
+    }
+  };
+
+  const doNextStop = () => {
+    if (!currentRecordId || !route) return;
     if (isLastStop) {
       advanceToNextStop(currentRecordId);
       setIsGuiding(false);
       setCurrentRecordId(null);
       Taro.showModal({
-        title: '导览完成',
-        content: `恭喜完成「${route.name}」全部${route.stops.length}个站点！参观记录已保存到我的记录。`,
-        showCancel: false
+        title: '导览完成 🎉',
+        content: `恭喜完成「${route.name}」全部${route.stops.length}个站点！现在去看看你的参观总结吧～`,
+        confirmText: '查看总结',
+        cancelText: '稍后再看',
+        success: (res) => {
+          if (res.confirm) {
+            Taro.navigateTo({
+              url: `/pages/visit-summary/index?recordId=${currentRecordId}`
+            });
+          }
+        }
       });
       return;
     }
     advanceToNextStop(currentRecordId);
     const nextIndex = currentStopIndex + 1;
     setCurrentStopIndex(nextIndex);
-    const currentStop = route.stops[currentStopIndex];
-    if (currentStop) {
-      setCompletedStops(prev => [...prev, currentStop.id]);
+    const stop = route.stops[currentStopIndex];
+    if (stop) {
+      setCompletedStops(prev => [...prev, stop.id]);
     }
     Taro.showToast({ title: `前往：${route.stops[nextIndex].name}`, icon: 'none' });
+  };
+
+  const handleExitGuide = () => {
+    if (!currentRecordId || !route) return;
+    Taro.showModal({
+      title: '退出导览',
+      content: '确定要退出导览吗？进度将保存，下次可继续参观。',
+      confirmText: '退出',
+      cancelText: '继续参观',
+      success: (res) => {
+        if (res.confirm) {
+          setIsGuiding(false);
+          Taro.showToast({ title: '进度已保存', icon: 'none' });
+        }
+      }
+    });
   };
 
   const handleEndRoute = () => {
     if (!currentRecordId || !route) return;
     Taro.showModal({
       title: '结束导览',
-      content: '确定要结束当前导览吗？进度将保存。',
+      content: '确定要结束并完成这条路线吗？完成后将生成参观总结。',
+      confirmText: '完成',
+      cancelText: '再看看',
       success: (res) => {
         if (res.confirm) {
           completeRouteVisit(currentRecordId);
           setIsGuiding(false);
           setCurrentRecordId(null);
-          Taro.showToast({ title: '导览已结束', icon: 'success' });
+          Taro.showToast({ title: '导览已完成', icon: 'success' });
+          Taro.navigateTo({
+            url: `/pages/visit-summary/index?recordId=${currentRecordId}`
+          });
         }
       }
     });
@@ -172,6 +221,18 @@ const RouteDetailPage: React.FC = () => {
   const currentStop = !isAllCompleted ? route.stops[currentStopIndex] : null;
   const nextStop = !isLastStop && !isAllCompleted ? route.stops[currentStopIndex + 1] : null;
 
+  const handleContinueGuide = () => {
+    if (!route) return;
+    const active = getActiveVisitRecord(route.id);
+    if (active) {
+      setCurrentRecordId(active.id);
+      setIsGuiding(true);
+      Taro.showToast({ title: '继续导览', icon: 'success' });
+    }
+  };
+
+  const hasActiveVisit = route && !!getActiveVisitRecord(route.id);
+
   return (
     <View className={styles.page}>
       {isGuiding && currentRecord && (
@@ -188,7 +249,7 @@ const RouteDetailPage: React.FC = () => {
                 />
               </View>
             </View>
-            <View className={styles.guideClose} onClick={handleEndRoute}>
+            <View className={styles.guideClose} onClick={handleExitGuide}>
               <Text>✕</Text>
             </View>
           </View>
@@ -325,6 +386,14 @@ const RouteDetailPage: React.FC = () => {
 
       {!isGuiding && (
         <View className={styles.bottomBar}>
+          {hasActiveVisit && (
+            <View className={styles.continueTip}>
+              <Text className={styles.continueTipIcon}>💡</Text>
+              <Text className={styles.continueTipText}>
+                上次进度：第{currentStopIndex + 1}站 · {formatElapsedTime(elapsedSeconds)}
+              </Text>
+            </View>
+          )}
           <View className={styles.actionItem} onClick={handleSave}>
             <Text className={styles.icon}>⭐</Text>
             <Text className={styles.label}>收藏</Text>
@@ -333,9 +402,12 @@ const RouteDetailPage: React.FC = () => {
             <Text className={styles.icon}>📤</Text>
             <Text className={styles.label}>分享</Text>
           </View>
-          <View className={styles.primaryBtn} onClick={handleStartRoute}>
-            <Text className={styles.icon}>🚶</Text>
-            <Text>开始导览</Text>
+          <View
+            className={`${styles.primaryBtn} ${hasActiveVisit ? styles.continueBtn : ''}`}
+            onClick={hasActiveVisit ? handleContinueGuide : handleStartRoute}
+          >
+            <Text className={styles.icon}>{hasActiveVisit ? '▶️' : '🚶'}</Text>
+            <Text>{hasActiveVisit ? '继续导览' : '开始导览'}</Text>
           </View>
         </View>
       )}

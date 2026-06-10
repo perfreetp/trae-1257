@@ -34,10 +34,19 @@ export interface Reservation {
   ticketCount: number;
   reservationTime: string;
   feedback?: ReservationFeedback;
+  rescheduleHistory?: RescheduleRecord[];
 }
 
 export interface ReservationFeedback {
   rating: number;
   comment: string;
   submitTime: string;
+}
+
+export interface RescheduleRecord {
+  oldDate: string;
+  oldTime: string;
+  newDate: string;
+  newTime: string;
+  time: string;
 }

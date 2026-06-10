@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
@@ -6,12 +6,115 @@ import { userInfo, checkInRecords, favoriteItems } from '@/data/user';
 import { useAppStore } from '@/store/appStore';
 import type { VisitNote, TimelineRecord } from '@/types/user';
 
+const getDateKey = (timestamp: string): string => {
+  return timestamp.split(' ')[0];
+};
+
+const getTodayStr = (): string => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+};
+
 const MinePage: React.FC = () => {
   const notes = useAppStore(state => state.notes);
   const timeline = useAppStore(state => state.timeline);
   const visitRecords = useAppStore(state => state.visitRecords);
 
-  const [activeTab, setActiveTab] = useState<'notes' | 'timeline'>('timeline');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'timeline' | 'notes'>('calendar');
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
+  const [selectedDate, setSelectedDate] = useState<string>(getTodayStr());
+
+  const recordsByDate = useMemo(() => {
+    const map: Record<string, TimelineRecord[]> = {};
+    timeline.forEach(record => {
+      const dateKey = getDateKey(record.timestamp);
+      if (!map[dateKey]) map[dateKey] = [];
+      map[dateKey].push(record);
+    });
+    return map;
+  }, [timeline]);
+
+  const getCalendarDays = () => {
+    const [year, month] = currentMonth.split('-').map(Number);
+    const firstDay = new Date(year, month - 1, 1);
+    const lastDay = new Date(year, month, 0);
+    const daysInMonth = lastDay.getDate();
+    const firstDayWeek = firstDay.getDay();
+
+    const days: Array<{ date: string; day: number; isCurrentMonth: boolean; hasRecord: boolean; isSelected: boolean; isToday: boolean }> = [];
+
+    const prevMonthLastDay = new Date(year, month - 1, 0).getDate();
+    for (let i = firstDayWeek - 1; i >= 0; i--) {
+      const day = prevMonthLastDay - i;
+      const prevMonth = month - 1 === 0 ? 12 : month - 1;
+      const prevYear = month - 1 === 0 ? year - 1 : year;
+      const dateStr = `${prevYear}-${String(prevMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      days.push({
+        date: dateStr,
+        day,
+        isCurrentMonth: false,
+        hasRecord: !!recordsByDate[dateStr]?.length,
+        isSelected: dateStr === selectedDate,
+        isToday: dateStr === getTodayStr()
+      });
+    }
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+      days.push({
+        date: dateStr,
+        day: i,
+        isCurrentMonth: true,
+        hasRecord: !!recordsByDate[dateStr]?.length,
+        isSelected: dateStr === selectedDate,
+        isToday: dateStr === getTodayStr()
+      });
+    }
+
+    const remaining = 42 - days.length;
+    for (let i = 1; i <= remaining; i++) {
+      const nextMonth = month + 1 > 12 ? 1 : month + 1;
+      const nextYear = month + 1 > 12 ? year + 1 : year;
+      const dateStr = `${nextYear}-${String(nextMonth).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+      days.push({
+        date: dateStr,
+        day: i,
+        isCurrentMonth: false,
+        hasRecord: !!recordsByDate[dateStr]?.length,
+        isSelected: dateStr === selectedDate,
+        isToday: dateStr === getTodayStr()
+      });
+    }
+
+    return days;
+  };
+
+  const selectedDayRecords = useMemo(() => {
+    return recordsByDate[selectedDate] || [];
+  }, [recordsByDate, selectedDate]);
+
+  const handlePrevMonth = () => {
+    const [year, month] = currentMonth.split('-').map(Number);
+    const prev = month - 1;
+    if (prev <= 0) {
+      setCurrentMonth(`${year - 1}-12`);
+    } else {
+      setCurrentMonth(`${year}-${String(prev).padStart(2, '0')}`);
+    }
+  };
+
+  const handleNextMonth = () => {
+    const [year, month] = currentMonth.split('-').map(Number);
+    const next = month + 1;
+    if (next > 12) {
+      setCurrentMonth(`${year + 1}-01`);
+    } else {
+      setCurrentMonth(`${year}-${String(next).padStart(2, '0')}`);
+    }
+  };
 
   const menuItems = [
     { key: 'checkin', icon: '📍', label: '打卡盖章', type: 'iconCheckin' },
@@ -196,10 +299,16 @@ const MinePage: React.FC = () => {
       <View className={styles.recordSection}>
         <View className={styles.tabHeader}>
           <View
+            className={`${styles.tabItem} ${activeTab === 'calendar' ? styles.active : ''}`}
+            onClick={() => setActiveTab('calendar')}
+          >
+            <Text>参观日历</Text>
+          </View>
+          <View
             className={`${styles.tabItem} ${activeTab === 'timeline' ? styles.active : ''}`}
             onClick={() => setActiveTab('timeline')}
           >
-            <Text>参观记录</Text>
+            <Text>全部记录</Text>
           </View>
           <View
             className={`${styles.tabItem} ${activeTab === 'notes' ? styles.active : ''}`}
@@ -208,6 +317,75 @@ const MinePage: React.FC = () => {
             <Text>参观笔记</Text>
           </View>
         </View>
+
+        {activeTab === 'calendar' && (
+          <View className={styles.calendarSection}>
+            <View className={styles.calendarHeader}>
+              <View className={styles.calendarNav} onClick={handlePrevMonth}>
+                <Text>‹</Text>
+              </View>
+              <Text className={styles.calendarTitle}>
+                {currentMonth.split('-')[0]}年{currentMonth.split('-')[1]}月
+              </Text>
+              <View className={styles.calendarNav} onClick={handleNextMonth}>
+                <Text>›</Text>
+              </View>
+            </View>
+            <View className={styles.weekDays}>
+              {['日', '一', '二', '三', '四', '五', '六'].map(day => (
+                <Text key={day} className={styles.weekDay}>{day}</Text>
+              ))}
+            </View>
+            <View className={styles.calendarGrid}>
+              {getCalendarDays().map(day => (
+                <View
+                  key={day.date}
+                  className={`${styles.calendarDay} ${!day.isCurrentMonth ? styles.otherMonth : ''} ${day.isSelected ? styles.selected : ''} ${day.isToday ? styles.today : ''}`}
+                  onClick={() => setSelectedDate(day.date)}
+                >
+                  <Text className={styles.dayNumber}>{day.day}</Text>
+                  {day.hasRecord && <View className={styles.recordDot} />}
+                </View>
+              ))}
+            </View>
+
+            <View className={styles.selectedDaySection}>
+              <View className={styles.selectedDayHeader}>
+                <Text className={styles.selectedDate}>{selectedDate}</Text>
+                <Text className={styles.selectedCount}>
+                  {selectedDayRecords.length} 条记录
+                </Text>
+              </View>
+              {selectedDayRecords.length === 0 ? (
+                <View className={styles.emptyDay}>
+                  <Text className={styles.emptyDayText}>当天暂无记录</Text>
+                </View>
+              ) : (
+                <View className={styles.dayTimeline}>
+                  {selectedDayRecords.map(record => (
+                    <View
+                      key={record.id}
+                      className={styles.timelineItem}
+                      onClick={() => handleTimelineClick(record)}
+                    >
+                      <View className={`${styles.timelineIcon} ${getTimelineItemClass(record.type)}`}>
+                        <Text>{record.icon}</Text>
+                      </View>
+                      <View className={styles.timelineContent}>
+                        <View className={styles.timelineHeader}>
+                          <Text className={styles.timelineTitle}>{record.title}</Text>
+                          <Text className={styles.timelineTime}>{record.timestamp.split(' ')[1]}</Text>
+                        </View>
+                        <Text className={styles.timelineDesc}>{record.description}</Text>
+                      </View>
+                      <Text className={styles.timelineArrow}>›</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          </View>
+        )}
 
         {activeTab === 'timeline' && (
           <View className={styles.timelineList}>
